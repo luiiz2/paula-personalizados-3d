@@ -182,8 +182,13 @@
   transition: transform 220ms ease-out;
 }
 
+.commercial-hero__media-reveal {
+  position: absolute;
+}
+
 .commercial-hero__media {
   position: absolute;
+  inset: 0;
   border-radius: 0;
   box-shadow: none;
   mask-image: radial-gradient(ellipse 74% 74% at 50% 50%, #000 48%, transparent 82%);
@@ -191,9 +196,12 @@
   transition: transform 300ms var(--ease-soft);
 }
 
-.commercial-hero__media--1 {
+.commercial-hero__media-reveal--1 {
   inset: 4% 17% 2% 2%;
   z-index: 2;
+}
+
+.commercial-hero__media--1 {
   transform: translate3d(
     calc(var(--pointer-x) * 12px),
     calc(var(--pointer-y) * 8px),
@@ -202,12 +210,15 @@
   animation: hero-float 6.2s ease-in-out infinite alternate;
 }
 
-.commercial-hero__media--2 {
+.commercial-hero__media-reveal--2 {
   width: 44%;
   height: 43%;
   right: 0;
   top: 1%;
   z-index: 3;
+}
+
+.commercial-hero__media--2 {
   transform: translate3d(
     calc(var(--pointer-x) * -9px),
     calc(var(--pointer-y) * -6px),
@@ -216,12 +227,15 @@
   animation: hero-float 7.4s 600ms ease-in-out infinite alternate-reverse;
 }
 
-.commercial-hero__media--3 {
+.commercial-hero__media-reveal--3 {
   width: 48%;
   height: 40%;
   right: -2%;
   bottom: 2%;
   z-index: 4;
+}
+
+.commercial-hero__media--3 {
   transform: translate3d(
     calc(var(--pointer-x) * 7px),
     calc(var(--pointer-y) * -11px),

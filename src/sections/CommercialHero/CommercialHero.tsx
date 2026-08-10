@@ -86,14 +86,19 @@ export function CommercialHero() {
         aria-label="Exemplos de personalizados 3D"
       >
         {heroAssets.map((asset, index) => (
-          <CommercialImage
+          <div
             key={asset.src}
-            asset={asset}
-            priority={index === 0}
-            sizes="(max-width: 767px) 78vw, (max-width: 1199px) 42vw, 30vw"
-            className={`commercial-hero__media commercial-hero__media--${index + 1}`}
-            imageClassName="commercial-hero__photo"
-          />
+            className={`commercial-hero__media-reveal commercial-hero__media-reveal--${index + 1}`}
+            data-hero-media
+          >
+            <CommercialImage
+              asset={asset}
+              priority={index === 0}
+              sizes="(max-width: 767px) 78vw, (max-width: 1199px) 42vw, 30vw"
+              className={`commercial-hero__media commercial-hero__media--${index + 1}`}
+              imageClassName="commercial-hero__photo"
+            />
+          </div>
         ))}
         <span className="commercial-hero__heart" aria-hidden="true">
           ♡

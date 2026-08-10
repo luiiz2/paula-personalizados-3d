@@ -30,4 +30,18 @@ describe('CommercialHero', () => {
 
     expect(screen.getByText(/feito à mão · 100% personalizado/i)).toBeVisible();
   });
+
+  it('keeps reveal transforms separate from pointer parallax transforms', () => {
+    const { container } = render(<CommercialHero />);
+    const revealLayers = container.querySelectorAll<HTMLElement>('[data-hero-media]');
+    const parallaxMedia = container.querySelectorAll<HTMLElement>('.commercial-hero__media');
+
+    expect(revealLayers).toHaveLength(3);
+    expect(parallaxMedia).toHaveLength(3);
+
+    revealLayers.forEach((layer, index) => {
+      expect(layer).not.toBe(parallaxMedia[index]);
+      expect(layer).toContainElement(parallaxMedia[index]);
+    });
+  });
 });
