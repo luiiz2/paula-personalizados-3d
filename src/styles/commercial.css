@@ -482,3 +482,186 @@
     margin-top: 1rem;
   }
 }
+
+.category-coverflow {
+  max-width: none;
+  padding-inline: 0;
+}
+
+.category-coverflow__heading {
+  padding-inline: 1.25rem;
+  text-align: center;
+}
+
+.category-coverflow__heading h2 {
+  margin: 0.55rem 0 0;
+  font: 900 clamp(3rem, 6vw, 6rem) / 0.9 var(--font-display);
+  text-transform: uppercase;
+}
+
+.category-coverflow__viewport {
+  position: relative;
+  overflow: clip;
+  height: 32rem;
+  max-width: 78rem;
+  margin: 1.5rem auto 0;
+  outline: none;
+  perspective: 80rem;
+  touch-action: pan-y;
+}
+
+.category-coverflow__viewport:focus-visible {
+  outline: 0.2rem solid #ca4f70;
+  outline-offset: 0.25rem;
+}
+
+.category-coverflow__slide-shell {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(27vw, 22rem);
+  height: 27rem;
+  transform: translate3d(
+      calc(-50% + var(--coverflow-x)),
+      -50%,
+      var(--coverflow-depth)
+    )
+    rotateY(var(--coverflow-rotate)) scale(var(--coverflow-scale));
+  transition:
+    transform 550ms var(--ease-soft),
+    opacity 550ms var(--ease-soft);
+}
+
+.category-coverflow__slide {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 1.5rem;
+  background: transparent;
+  box-shadow: 0 1.5rem 3.5rem rgb(67 39 37 / 0.16);
+  cursor: pointer;
+}
+
+.category-coverflow__slide:hover,
+.category-coverflow__slide:focus-visible {
+  transform: translateY(-0.5rem);
+  box-shadow: 0 2rem 4rem rgb(67 39 37 / 0.22);
+}
+
+.category-coverflow__slide .commercial-image__media {
+  transition: transform 500ms var(--ease-soft);
+}
+
+.category-coverflow__slide:hover .commercial-image__media {
+  transform: scale(1.03) translateY(-0.2rem);
+}
+
+.category-coverflow__slide .commercial-image {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.category-coverflow__label {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 4rem 1.25rem 1.25rem;
+  color: #fff;
+  background: linear-gradient(transparent, rgb(25 18 19 / 0.78));
+  font: 800 1.05rem/1.05 var(--font-display);
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.category-coverflow__arrow {
+  position: absolute;
+  z-index: 4;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  color: #fff;
+  opacity: 0;
+  transform: translateX(-0.5rem);
+  transition:
+    opacity 260ms var(--ease-soft),
+    transform 260ms var(--ease-soft);
+}
+
+.category-coverflow__slide:hover .category-coverflow__arrow,
+.category-coverflow__slide:focus-visible .category-coverflow__arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.category-coverflow__reveal {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateX(12%);
+  transition:
+    opacity 500ms var(--ease-soft),
+    transform 500ms var(--ease-soft);
+}
+
+.category-coverflow__slide-shell[data-active='true']:hover .category-coverflow__reveal,
+.category-coverflow__slide-shell[data-revealed='true'] .category-coverflow__reveal {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.category-coverflow__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.category-coverflow__controls button,
+.category-coverflow__compare {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 0;
+  border-radius: 999px;
+  color: #27201f;
+  background: rgb(255 255 255 / 0.66);
+  box-shadow: 0 0.6rem 1.5rem rgb(67 39 37 / 0.1);
+}
+
+.category-coverflow__compare {
+  position: absolute;
+  z-index: 6;
+  top: 1rem;
+  right: 1rem;
+  padding-inline: 0.9rem;
+  font: 700 0.75rem/1 var(--font-sans);
+}
+
+@media (max-width: 48rem) {
+  .category-coverflow__viewport {
+    height: 27rem;
+  }
+
+  .category-coverflow__slide-shell {
+    width: 72vw;
+    height: 23rem;
+    transform: translate3d(calc(-50% + var(--coverflow-x)), -50%, 0)
+      scale(var(--coverflow-scale));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-coverflow__slide-shell,
+  .category-coverflow__slide .commercial-image__media,
+  .category-coverflow__arrow,
+  .category-coverflow__reveal {
+    transition: none;
+  }
+
+  .category-coverflow__slide:hover,
+  .category-coverflow__slide:focus-visible,
+  .category-coverflow__slide:hover .commercial-image__media {
+    transform: none;
+  }
+}
