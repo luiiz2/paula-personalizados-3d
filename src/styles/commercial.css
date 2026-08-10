@@ -665,3 +665,112 @@
     transform: none;
   }
 }
+
+.channel-grid {
+  text-align: center;
+}
+
+.channel-grid__heading h2 {
+  margin: 0.55rem 0 0;
+  font: 900 clamp(3rem, 6vw, 6rem) / 0.9 var(--font-display);
+  text-transform: uppercase;
+}
+
+.channel-grid__links {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.channel-link {
+  display: flex;
+  min-height: 4.75rem;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1.15rem;
+  border-radius: 1rem;
+  color: #fff;
+  box-shadow: 0 0.9rem 2rem rgb(52 37 35 / 0.12);
+  font: 800 1rem/1 var(--font-sans);
+  transition:
+    transform 260ms var(--ease-soft),
+    filter 260ms var(--ease-soft),
+    box-shadow 260ms var(--ease-soft);
+}
+
+.channel-link:hover,
+.channel-link:focus-visible {
+  color: #fff;
+  filter: saturate(1.08);
+  transform: translateY(-0.35rem) scale(1.02);
+  box-shadow: 0 1.2rem 2.4rem rgb(52 37 35 / 0.18);
+}
+
+.channel-link--whatsapp {
+  background: #2fbe68;
+}
+
+.channel-link--instagram {
+  background: linear-gradient(105deg, #bd3788, #ef6375);
+}
+
+.channel-link--shopee {
+  background: #ee5a24;
+}
+
+.channel-link--mercado-livre {
+  color: #28251d;
+  background: #f4cf12;
+}
+
+.channel-link--mercado-livre:hover,
+.channel-link--mercado-livre:focus-visible {
+  color: #28251d;
+}
+
+.channel-link__icon {
+  width: 1.7rem;
+  height: 1.7rem;
+  transition: transform 260ms var(--ease-soft);
+}
+
+.channel-link__arrow {
+  margin-left: auto;
+  transition: transform 260ms var(--ease-soft);
+}
+
+.channel-link:hover .channel-link__icon {
+  transform: rotate(-5deg) scale(1.08);
+}
+
+.channel-link:hover .channel-link__arrow {
+  transform: translateX(0.3rem);
+}
+
+@media (max-width: 60rem) {
+  .channel-grid__links {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 32rem) {
+  .channel-grid__links {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .channel-link,
+  .channel-link__icon,
+  .channel-link__arrow {
+    transition: none;
+  }
+
+  .channel-link:hover,
+  .channel-link:focus-visible,
+  .channel-link:hover .channel-link__icon,
+  .channel-link:hover .channel-link__arrow {
+    transform: none;
+  }
+}
