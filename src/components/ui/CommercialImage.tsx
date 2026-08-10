@@ -27,6 +27,7 @@ export function CommercialImage({
     <div
       className={cn('commercial-image', className)}
       data-image-state={failed ? 'failed' : 'ready'}
+      style={{ aspectRatio: '4 / 3' }}
     >
       {failed ? (
         <span

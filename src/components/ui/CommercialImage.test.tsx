@@ -29,4 +29,10 @@ describe('CommercialImage', () => {
       'Imagem temporariamente indisponível',
     );
   });
+
+  it('reserves a fallback region without consumer supplied dimensions', () => {
+    const { container } = render(<CommercialImage asset={asset} />);
+
+    expect(container.firstChild).toHaveStyle({ aspectRatio: '4 / 3' });
+  });
 });
