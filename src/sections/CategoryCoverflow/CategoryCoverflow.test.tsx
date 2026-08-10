@@ -1,8 +1,11 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CategoryCoverflow, circularOffset } from './CategoryCoverflow';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 
 describe('CategoryCoverflow', () => {
   it('wraps slide offsets around the shortest path', () => {
@@ -48,6 +51,23 @@ describe('CategoryCoverflow', () => {
     expect(screen.getByText('2 de 4')).toBeVisible();
   });
 
+  it('keeps only the active category card in the tab order', () => {
+    render(<CategoryCoverflow />);
+
+    const firstCategory = screen.getByRole('button', { name: 'Miniaturas da sua foto' });
+    const drawingCategory = screen.getByRole('button', {
+      name: 'Do desenho para a vida em 3D',
+    });
+
+    expect(firstCategory).toHaveAttribute('tabindex', '0');
+    expect(drawingCategory).toHaveAttribute('tabindex', '-1');
+
+    fireEvent.click(screen.getByRole('button', { name: /próxima categoria/i }));
+
+    expect(firstCategory).toHaveAttribute('tabindex', '-1');
+    expect(drawingCategory).toHaveAttribute('tabindex', '0');
+  });
+
   it('navigates only when a horizontal pointer drag reaches the threshold', () => {
     render(<CategoryCoverflow />);
     const activeCategory = screen.getByRole('button', { name: 'Miniaturas da sua foto' });
@@ -62,6 +82,21 @@ describe('CategoryCoverflow', () => {
 
     fireEvent.click(activeCategory, { detail: 1 });
     expect(screen.getByText('2 de 4')).toBeVisible();
+  });
+
+  it('expires drag click suppression when no residual click is emitted', () => {
+    vi.useFakeTimers();
+    render(<CategoryCoverflow />);
+    const activeCategory = screen.getByRole('button', { name: 'Miniaturas da sua foto' });
+
+    fireEvent.pointerDown(activeCategory, { clientX: 100, pointerId: 1 });
+    fireEvent.pointerUp(activeCategory, { clientX: 57, pointerId: 1 });
+    expect(screen.getByText('2 de 4')).toBeVisible();
+
+    vi.runOnlyPendingTimers();
+    fireEvent.click(activeCategory, { detail: 1 });
+
+    expect(screen.getByText('1 de 4')).toBeVisible();
   });
 
   it('offers an explicit drawing-to-result comparison control', () => {

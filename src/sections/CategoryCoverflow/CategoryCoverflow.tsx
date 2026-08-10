@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -25,7 +26,17 @@ export function CategoryCoverflow() {
   const [revealResult, setRevealResult] = useState(false);
   const pointerStart = useRef<number | null>(null);
   const pointerDragged = useRef(false);
+  const pointerDraggedReset = useRef<ReturnType<typeof setTimeout> | null>(null);
   const length = commercialCategories.length;
+
+  useEffect(
+    () => () => {
+      if (pointerDraggedReset.current !== null) {
+        clearTimeout(pointerDraggedReset.current);
+      }
+    },
+    [],
+  );
 
   const goTo = (index: number) => {
     setActiveIndex((index + length) % length);
@@ -45,6 +56,10 @@ export function CategoryCoverflow() {
   };
 
   const onPointerDown = (event: PointerEvent<HTMLElement>) => {
+    if (pointerDraggedReset.current !== null) {
+      clearTimeout(pointerDraggedReset.current);
+      pointerDraggedReset.current = null;
+    }
     pointerStart.current = event.clientX;
     pointerDragged.current = false;
     event.currentTarget.setPointerCapture?.(event.pointerId);
@@ -58,20 +73,36 @@ export function CategoryCoverflow() {
     if (Math.abs(distance) < 42) return;
 
     pointerDragged.current = true;
+    pointerDraggedReset.current = setTimeout(() => {
+      pointerDragged.current = false;
+      pointerDraggedReset.current = null;
+    }, 0);
     goTo(activeIndex + (distance < 0 ? 1 : -1));
   };
 
   const onPointerCancel = () => {
+    if (pointerDraggedReset.current !== null) {
+      clearTimeout(pointerDraggedReset.current);
+      pointerDraggedReset.current = null;
+    }
     pointerStart.current = null;
     pointerDragged.current = false;
   };
 
   const onSlideClick = (event: MouseEvent<HTMLButtonElement>, index: number) => {
     if (pointerDragged.current && event.detail > 0) {
+      if (pointerDraggedReset.current !== null) {
+        clearTimeout(pointerDraggedReset.current);
+        pointerDraggedReset.current = null;
+      }
       pointerDragged.current = false;
       return;
     }
 
+    if (pointerDraggedReset.current !== null) {
+      clearTimeout(pointerDraggedReset.current);
+      pointerDraggedReset.current = null;
+    }
     pointerDragged.current = false;
     goTo(index);
   };
@@ -131,6 +162,7 @@ export function CategoryCoverflow() {
                 className="category-coverflow__slide"
                 aria-current={active ? 'true' : undefined}
                 aria-label={category.title}
+                tabIndex={active ? 0 : -1}
                 onClick={(event) => onSlideClick(event, index)}
               >
                 <CommercialImage
