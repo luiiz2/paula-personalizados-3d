@@ -2180,4 +2180,3 @@ git commit -m "feat: launch commercial landing experience"
 - [ ] Mobile menu accessibility behavior remains covered by tests.
 - [ ] Legacy sections remain on disk but are absent from `src/App.tsx` and the production import graph.
 - [ ] README explains where to replace final photographs later.
-
