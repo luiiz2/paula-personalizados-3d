@@ -14,6 +14,7 @@
 
   /* Fonts */
   --font-sans: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   --font-editorial: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-script: 'Pacifico', 'Caveat', cursive;
   --font-script-soft: 'Caveat', 'Pacifico', cursive;
