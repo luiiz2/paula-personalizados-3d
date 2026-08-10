@@ -1,6 +1,6 @@
 # Design: AGENTS.md do projeto
 
-**Data:** 2026-08-10  
+**Data:** 2026-08-10
 **Status:** aprovado
 
 ## Objetivo
