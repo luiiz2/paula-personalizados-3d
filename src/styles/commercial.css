@@ -442,7 +442,7 @@
   text-transform: uppercase;
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 58rem) {
   .transformation-story {
     grid-template-columns: 1fr;
   }
