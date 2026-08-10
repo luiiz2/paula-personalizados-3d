@@ -17,9 +17,15 @@ import { Marquee } from '@/components/motion/Marquee';
 function App() {
   return (
     <>
+      <a
+        href="#main-content"
+        className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-lg bg-ink px-4 py-3 font-sans font-semibold text-white transition-transform focus:translate-y-0"
+      >
+        Ir para o conteúdo principal
+      </a>
       <Header />
 
-      <main id="main-content">
+      <main id="main-content" tabIndex={-1}>
         {/* Hero */}
         <Hero />
 

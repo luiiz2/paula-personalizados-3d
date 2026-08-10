@@ -23,9 +23,9 @@ gsap.registerPlugin(ScrollTrigger);
 export function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
   const productRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLDivElement>(null);
-  const scriptRef = useRef<HTMLDivElement>(null);
-  const endRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLSpanElement>(null);
+  const scriptRef = useRef<HTMLSpanElement>(null);
+  const endRef = useRef<HTMLSpanElement>(null);
   const descRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const decoRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -160,20 +160,22 @@ export function Hero() {
 
       <div className="container-prose relative z-10 grid items-center gap-6 lg:grid-cols-2 lg:gap-16">
         <div className="flex flex-col items-start lg:items-start text-left">
-          <p className="eyebrow mb-5 text-white/60">Paula Personalizados 3D</p>
-          <div id="hero-title" ref={headlineRef} className="hero-display text-white">
-            {headlineParts.map((part, i) => (
-              <div key={i} className="block">{part}</div>
-            ))}
-          </div>
+          <p className="eyebrow mb-5 text-white/80">Paula Personalizados 3D</p>
+          <h1 id="hero-title" className="m-0">
+            <span ref={headlineRef} className="hero-display block text-white">
+              {headlineParts.map((part) => (
+                <span key={part} className="block">{part}</span>
+              ))}
+            </span>
 
-          <div ref={scriptRef} className="font-script display-script text-pink-soft mt-2 mb-2 leading-none">
-            {scriptPart}
-          </div>
+            <span ref={scriptRef} className="font-script display-script my-2 block leading-none text-pink-soft">
+              {scriptPart}
+            </span>
 
-          <div ref={endRef} className="hero-display text-white">
-            {endPart}
-          </div>
+            <span ref={endRef} className="hero-display block text-white">
+              {endPart}
+            </span>
+          </h1>
 
           <p ref={descRef} className="mt-4 max-w-xl text-base leading-relaxed text-white/70 md:mt-6 md:text-xl">
             Fotos, desenhos e ideias transformados em peças únicas.

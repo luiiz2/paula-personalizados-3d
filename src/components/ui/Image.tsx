@@ -1,6 +1,6 @@
 /**
- * Image — Wrapper otimizado para imagens (PRD §101)
- * WebP/AVIF via Vite, lazy loading, srcset, width/height definidos
+ * Image — Wrapper de carregamento de imagens (PRD §101)
+ * Centraliza prioridade, lazy loading, decoding e estilos de preenchimento.
  */
 import { type ImgHTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils';

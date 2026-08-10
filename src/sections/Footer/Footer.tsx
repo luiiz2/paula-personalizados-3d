@@ -4,17 +4,16 @@
  * Menu: Início, Personalizados, Nosso trabalho, Sobre, Contato
  * Copyright: © 2026 Paula Personalizados 3D
  */
-import { Link } from 'react-scroll';
 import { ExternalLink } from '@/components/ui/ExternalLink';
 import { links, hasLink } from '@/data/links';
 import { MessageSquare, ShoppingBag, Store } from 'lucide-react';
 
 const footerNav = [
-  { label: 'Início', href: 'hero' },
-  { label: 'Personalizados', href: 'produtos' },
-  { label: 'Nosso trabalho', href: 'galeria' },
-  { label: 'Sobre', href: 'sobre' },
-  { label: 'Contato', href: 'contato' },
+  { label: 'Início', href: '#hero' },
+  { label: 'Personalizados', href: '#produtos' },
+  { label: 'Nosso trabalho', href: '#galeria' },
+  { label: 'Sobre', href: '#sobre' },
+  { label: 'Contato', href: '#contato' },
 ] as const;
 
 const socialLinks = [
@@ -103,15 +102,12 @@ export function Footer() {
             <ul className="space-y-3" role="list">
               {footerNav.map((item) => (
                 <li key={item.label}>
-                  <Link
-                    to={item.href}
-                    smooth={true}
-                    duration={500}
-                    offset={-80}
+                  <a
+                    href={item.href}
                     className="font-sans text-base text-ink/70 hover:text-pink transition-colors link-underline"
                   >
                     {item.label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -165,19 +161,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-ink/5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-16 border-t border-ink/5 pt-8 text-center md:text-left">
           <p className="font-sans text-sm text-mute text-center md:text-left">
             © 2026 Paula Personalizados 3D. Todos os direitos reservados.
           </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-            <a href="#" className="font-sans text-sm text-mute hover:text-pink transition-colors link-underline">
-              Privacidade
-            </a>
-            <a href="#" className="font-sans text-sm text-mute hover:text-pink transition-colors link-underline">
-              Termos
-            </a>
-          </div>
         </div>
       </div>
     </footer>

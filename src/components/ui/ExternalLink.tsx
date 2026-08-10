@@ -3,8 +3,8 @@
  * target="_blank" + rel="noopener noreferrer"
  * Underline animado (PRD §105)
  */
-import { type AnchorHTMLAttributes, forwardRef } from 'react';
-import { cn, openExternal } from '@/lib/utils';
+import { type AnchorHTMLAttributes, forwardRef, type MouseEvent } from 'react';
+import { cn } from '@/lib/utils';
 import { ExternalLink as ExternalLinkIcon } from 'lucide-react';
 
 interface ExternalLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -16,13 +16,11 @@ interface ExternalLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 
 export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(
   ({ children, href, showIcon = true, className, onClick, ...props }, ref) => {
-    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
       if (!href) {
         e.preventDefault();
         return;
       }
-      // openExternal já aplica _blank, noopener, noreferrer
-      openExternal(href);
       onClick?.(e);
     };
 

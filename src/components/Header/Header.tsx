@@ -4,7 +4,6 @@
  * Mobile: Logo + Hambúrguer + Full-screen menu
  */
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-scroll';
 import { AnimatedButton } from '@/components/ui/AnimatedButton';
 import { ExternalLink } from '@/components/ui/ExternalLink';
 import { cn, lockBodyScroll } from '@/lib/utils';
@@ -12,11 +11,11 @@ import { Menu, X, ShoppingBag, MessageSquare, ChevronDown, Store } from 'lucide-
 import { links, hasLink, openExternal } from '@/data/links';
 
 const navItems = [
-  { label: 'Início', href: 'hero' },
-  { label: 'Personalizados', href: 'produtos' },
-  { label: 'Nosso trabalho', href: 'galeria' },
-  { label: 'Sobre', href: 'sobre' },
-  { label: 'Contato', href: 'contato' },
+  { label: 'Início', href: '#hero' },
+  { label: 'Personalizados', href: '#produtos' },
+  { label: 'Nosso trabalho', href: '#galeria' },
+  { label: 'Sobre', href: '#sobre' },
+  { label: 'Contato', href: '#contato' },
 ] as const;
 
 export function Header() {
@@ -25,6 +24,9 @@ export function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileToggleRef = useRef<HTMLButtonElement>(null);
 
   // Scroll effect (PRD §19)
   useEffect(() => {
@@ -54,6 +56,68 @@ export function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownOpen]);
 
+  // Close dropdown with Escape and restore focus to its trigger.
+  useEffect(() => {
+    if (!dropdownOpen) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setDropdownOpen(false);
+      dropdownButtonRef.current?.focus();
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [dropdownOpen]);
+
+  // Keep keyboard focus inside the modal mobile menu while it is open.
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const dialog = mobileMenuRef.current;
+    const mobileToggle = mobileToggleRef.current;
+
+    const getFocusableElements = () => Array.from(
+      dialog?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), summary, [tabindex]:not([tabindex="-1"])'
+      ) ?? []
+    );
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      getFocusableElements()[0]?.focus();
+    });
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setMobileOpen(false);
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+      const focusableElements = getFocusableElements();
+      if (!focusableElements.length) return;
+
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.removeEventListener('keydown', handleKeyDown);
+      mobileToggle?.focus();
+    };
+  }, [mobileOpen]);
+
   const closeMobile = () => setMobileOpen(false);
 
   return (
@@ -65,7 +129,7 @@ export function Header() {
           'transition-all duration-400 ease-soft',
           scrolled
             ? 'bg-cream/80 backdrop-blur-md border-b border-ink/5 shadow-[0_2px_20px_-4px_rgb(23_23_23/0.06)]'
-            : 'bg-transparent'
+            : 'border-b border-white/10 bg-ink/20 backdrop-blur-sm'
         )}
         role="banner"
       >
@@ -74,10 +138,8 @@ export function Header() {
           aria-label="Navegação principal"
         >
           {/* Logo */}
-          <Link
-            to="hero"
-            smooth={true}
-            duration={500}
+          <a
+            href="#hero"
             className="flex items-center gap-2 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-lg"
             aria-label="Paula Personalizados 3D - Início"
           >
@@ -102,27 +164,23 @@ export function Header() {
             )}>
               Paula Personalizados 3D
             </span>
-          </Link>
+          </a>
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-8">
-            <ul className="flex items-center gap-6" role="menubar">
+            <ul className="flex items-center gap-6">
               {navItems.map((item) => (
-                <li key={item.label} role="none">
-                  <Link
-                    to={item.href}
-                    smooth={true}
-                    duration={500}
-                    offset={-80}
+                <li key={item.label}>
+                  <a
+                    href={item.href}
                     className={cn(
                       'font-sans font-medium text-sm transition-colors link-underline',
                       scrolled ? 'text-ink/80 hover:text-pink' : 'text-white/80 hover:text-white',
                     )}
-                    role="menuitem"
                     onClick={closeMobile}
                   >
                     {item.label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -132,6 +190,7 @@ export function Header() {
               {/* Dropdown Onde comprar */}
               <div className="relative" ref={dropdownRef}>
                 <button
+                  ref={dropdownButtonRef}
                   type="button"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className={cn(
@@ -155,11 +214,9 @@ export function Header() {
                 {dropdownOpen && (
                   <div
                     className="absolute right-0 top-full mt-2 w-48 rounded-xl bg-white border border-ink/5 shadow-[0_20px_50px_-12px_rgb(23_23_23/0.15)] py-2 animate-in fade-in-0 zoom-in-95 duration-200 ease-soft"
-                    role="menu"
                   >
                     {hasLink('shopee') && (
                       <button
-                        role="menuitem"
                         onClick={() => openExternal(links.shopee)}
                         className="w-full px-4 py-2 text-left text-sm font-sans text-ink/80 hover:text-pink hover:bg-pink-soft/30 transition-colors flex items-center gap-2"
                       >
@@ -174,7 +231,6 @@ export function Header() {
                     )}
                     {hasLink('mercadoLivre') && (
                       <button
-                        role="menuitem"
                         onClick={() => openExternal(links.mercadoLivre)}
                         className="w-full px-4 py-2 text-left text-sm font-sans text-ink/80 hover:text-pink hover:bg-pink-soft/30 transition-colors flex items-center gap-2"
                       >
@@ -207,6 +263,7 @@ export function Header() {
 
           {/* Mobile Hamburger */}
           <button
+            ref={mobileToggleRef}
             type="button"
             className={cn(
               'lg:hidden p-2 rounded-xl backdrop-blur border transition-colors',
@@ -227,8 +284,9 @@ export function Header() {
       {/* Mobile Menu Overlay */}
       {mobileOpen && (
         <div
+          ref={mobileMenuRef}
           id="mobile-menu"
-          className="fixed inset-0 z-40 bg-cream/98 backdrop-blur-md animate-in fade-in-0 duration-300 ease-soft lg:hidden"
+          className="fixed inset-0 z-[60] bg-cream/98 backdrop-blur-md animate-in fade-in-0 duration-300 ease-soft lg:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Menu de navegação"
@@ -249,20 +307,16 @@ export function Header() {
 
             {/* Nav links */}
             <nav className="flex-1 py-6 px-6 overflow-y-auto" aria-label="Navegação mobile">
-              <ul className="space-y-4" role="menubar">
+              <ul className="space-y-4">
                 {navItems.map((item) => (
-                  <li key={item.label} role="none">
-                    <Link
-                      to={item.href}
-                      smooth={true}
-                      duration={500}
-                      offset={-80}
+                  <li key={item.label}>
+                    <a
+                      href={item.href}
                       onClick={closeMobile}
                       className="block px-4 py-3 text-lg font-sans font-medium text-ink/80 hover:text-pink hover:bg-pink-soft/30 rounded-xl transition-colors link-underline"
-                      role="menuitem"
                     >
                       {item.label}
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ul>

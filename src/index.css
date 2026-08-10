@@ -38,6 +38,10 @@ html {
   text-size-adjust: 100%;
 }
 
+[id] {
+  scroll-margin-top: 6rem;
+}
+
 body {
   background-color: var(--color-cream);
   color: var(--color-ink);
@@ -125,10 +129,16 @@ img {
 
 .hero-display {
   font-family: var(--font-editorial);
-  font-size: clamp(2.75rem, 5.5vw, 5rem);
+  font-size: clamp(2.25rem, 10vw, 5rem);
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 0.88;
+}
+
+@media (min-width: 48rem) {
+  .hero-display {
+    font-size: clamp(2.75rem, 5.5vw, 5rem);
+  }
 }
 
 .display-section {

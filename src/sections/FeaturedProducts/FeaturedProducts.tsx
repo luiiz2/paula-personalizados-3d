@@ -11,6 +11,7 @@ import { ProductCard } from '@/components/ProductCard/ProductCard';
 import { SectionTitle } from '@/components/SectionTitle/SectionTitle';
 import { FloatingDecoration } from '@/components/motion/FloatingDecoration';
 import { products } from '@/data/products';
+import { links } from '@/data/links';
 
 export function FeaturedProducts() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -66,7 +67,7 @@ export function FeaturedProducts() {
 
         <div className="mt-16 text-center">
           <a
-            href="https://www.instagram.com/paulapersonalizados3d?igsh=M3ZwbzRsbGNsdWc2"
+            href={links.instagram}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 font-sans font-medium text-white hover:text-pink-soft/80 transition-colors link-underline"
