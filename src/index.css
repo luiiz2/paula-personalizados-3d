@@ -1,0 +1,299 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   Paula Personalizados 3D — Design Tokens (Tailwind v4 theme)
+   ============================================================ */
+@theme {
+  /* Colors */
+  --color-cream: #faf7f4; /* fundo principal off-white quente */
+  --color-pink: #e89ab6; /* rosa principal */
+  --color-pink-soft: #f8dde7; /* rosa claro */
+  --color-ink: #171717; /* preto */
+  --color-mute: #747474; /* cinza */
+  --color-white: #ffffff;
+
+  /* Fonts */
+  --font-sans: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-editorial: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-script: 'Pacifico', 'Caveat', cursive;
+  --font-script-soft: 'Caveat', 'Pacifico', cursive;
+
+  /* Easing */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Container */
+  --container-prose: 80rem;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Lock horizontal overflow globally (PRD §129) */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Headings default to editorial */
+h1,
+h2,
+h3 {
+  font-family: var(--font-editorial);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-pink);
+  color: var(--color-ink);
+}
+
+/* Focus visible (A11y) */
+:focus-visible {
+  outline: 2px solid var(--color-pink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Links default */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Images non-draggable */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* ============================================================
+   Utility components
+   ============================================================ */
+
+/* Editorial giant headline */
+.font-editorial {
+  font-family: var(--font-editorial);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+}
+
+.font-script {
+  font-family: var(--font-script);
+  font-weight: 400;
+}
+
+.font-script-soft {
+  font-family: var(--font-script-soft);
+}
+
+/* Fluid editorial (PRD §93) */
+.display-hero {
+  font-family: var(--font-editorial);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+  font-size: clamp(3.5rem, 13vw, 11rem);
+}
+
+.hero-display {
+  font-family: var(--font-editorial);
+  font-size: clamp(2.75rem, 5.5vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+}
+
+.display-section {
+  font-family: var(--font-editorial);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  font-size: clamp(2.75rem, 9vw, 7rem);
+}
+
+.display-script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  line-height: 1;
+}
+
+/* Section wrapper */
+.section {
+  padding-block: clamp(4.5rem, 11vw, 9rem);
+  position: relative;
+}
+
+.container-prose {
+  width: 100%;
+  max-width: calc(var(--container-prose) + 4rem);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 3rem);
+}
+
+/* Editorial uppercase eyebrow */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-mute);
+}
+
+/* Marquee */
+@keyframes marquee-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  animation: marquee-x 38s linear infinite;
+  will-change: transform;
+}
+
+/* Floating */
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--float-rotation, 0deg));
+  }
+  50% {
+    transform: translate3d(0, calc(-1 * var(--float-distance, 14px)), 0)
+      rotate(var(--float-rotation, 0deg));
+  }
+}
+
+.animate-float {
+  animation: float-y 7s var(--ease-soft) infinite;
+}
+
+.animate-float-slow {
+  animation: float-y 11s var(--ease-soft) infinite;
+}
+
+/* Wing flap for butterfly */
+@keyframes wing-flap {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.78);
+  }
+}
+
+.animate-wing {
+  transform-origin: center;
+  animation: wing-flap 3.4s var(--ease-soft) infinite;
+}
+
+/* Underline animated (PRD §105) */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s var(--ease-soft);
+}
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Reduce motion cover image rendering for big-edge photos */
+img {
+  display: block;
+}
+
+/* ============================================================
+   Reduced Motion (PRD §95)
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-float,
+  .animate-float-slow,
+  .animate-marquee,
+  .animate-wing {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   Scrollbar (discreet)
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-pink-soft);
+  border-radius: 99px;
+  border: 2px solid var(--color-cream);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-pink);
+}
+
+/* Hide scrollbar for horizontal swipe rails */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
