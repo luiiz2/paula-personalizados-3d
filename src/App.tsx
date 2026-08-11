@@ -23,8 +23,10 @@ function App() {
           <ArtisanShowcase />
           <TransformationStory />
           <CategoryCoverflow />
-          <ChannelGrid />
-          <MemoryClosing />
+          <div className="commercial-closing-chapter">
+            <ChannelGrid />
+            <MemoryClosing />
+          </div>
         </main>
         <Footer />
       </div>

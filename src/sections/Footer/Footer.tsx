@@ -1,5 +1,6 @@
 import { ExternalLink } from '@/components/ui/ExternalLink';
 import { commercialChannels } from '@/data/commercial';
+import { hasLink } from '@/data/links';
 
 const footerNav = [
   { label: 'Início', href: '#hero' },
@@ -27,7 +28,7 @@ export function Footer() {
       </nav>
       <div className="commercial-footer__channels" aria-label="Canais comerciais">
         {commercialChannels
-          .filter((channel) => channel.href)
+          .filter((channel) => hasLink(channel.key))
           .map((channel) => (
             <ExternalLink key={channel.key} href={channel.href} showIcon={false}>
               {channel.label}

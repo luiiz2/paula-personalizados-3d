@@ -30,8 +30,23 @@ describe('commercial landing page', () => {
     expect(transformationHeading.compareDocumentPosition(categoriesHeading)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
-    expect(screen.getByRole('heading', { level: 2, name: /onde você nos encontra/i })).toBeVisible();
-    expect(screen.getByRole('heading', { level: 2, name: /muito mais que presentes/i })).toBeVisible();
+    const channelsHeading = screen.getByRole('heading', {
+      level: 2,
+      name: /onde você nos encontra/i,
+    });
+    const closingHeading = screen.getByRole('heading', {
+      level: 2,
+      name: /feito para quem importa/i,
+    });
+    const closingChapter = channelsHeading.closest<HTMLElement>('.commercial-closing-chapter');
+    const main = screen.getByRole('main');
+    const footer = screen.getByRole('contentinfo');
+
+    expect(channelsHeading).toBeVisible();
+    expect(closingHeading).toBeVisible();
+    expect(closingChapter).toContainElement(closingHeading);
+    expect(main).toContainElement(closingChapter);
+    expect(main).not.toContainElement(footer);
     expect(screen.getByRole('link', { name: /ir para o conteúdo principal/i })).toHaveAttribute(
       'href',
       '#main-content',

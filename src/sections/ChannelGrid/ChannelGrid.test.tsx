@@ -7,6 +7,8 @@ describe('ChannelGrid', () => {
   it('renders the four approved destinations as secure links', () => {
     render(<ChannelGrid />);
 
+    expect(screen.getAllByRole('link')).toHaveLength(4);
+
     for (const channel of commercialChannels) {
       const link = screen.getByRole('link', { name: new RegExp(channel.label, 'i') });
       expect(link).toHaveAttribute('href', channel.href);
