@@ -6,9 +6,30 @@ describe('commercial landing page', () => {
   it('assembles the approved short conversion journey', () => {
     render(<App />);
 
+    const heroHeading = screen.getByRole('heading', { level: 1 });
+    const artisanHeading = screen.getByRole('heading', {
+      level: 2,
+      name: /feito à mão\. feito pra durar\./i,
+    });
+    const transformationHeading = screen.getByRole('heading', {
+      level: 2,
+      name: /da sua foto para o 3d/i,
+    });
+    const categoriesHeading = screen.getByRole('heading', {
+      level: 2,
+      name: /nossas categorias/i,
+    });
+
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
-    expect(screen.getByRole('heading', { level: 2, name: /da sua foto para o 3d/i })).toBeVisible();
-    expect(screen.getByRole('heading', { level: 2, name: /nossas categorias/i })).toBeVisible();
+    expect(heroHeading.compareDocumentPosition(artisanHeading)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(artisanHeading.compareDocumentPosition(transformationHeading)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(transformationHeading.compareDocumentPosition(categoriesHeading)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
     expect(screen.getByRole('heading', { level: 2, name: /onde você nos encontra/i })).toBeVisible();
     expect(screen.getByRole('heading', { level: 2, name: /muito mais que presentes/i })).toBeVisible();
     expect(screen.getByRole('link', { name: /ir para o conteúdo principal/i })).toHaveAttribute(

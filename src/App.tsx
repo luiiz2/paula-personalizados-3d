@@ -2,6 +2,7 @@ import { Header } from '@/components/Header/Header';
 import { SmoothScroll } from '@/components/motion/SmoothScroll';
 import { CommercialHero } from '@/sections/CommercialHero/CommercialHero';
 import { TrustMarquee } from '@/sections/CommercialHero/TrustMarquee';
+import { ArtisanShowcase } from '@/sections/ArtisanShowcase/ArtisanShowcase';
 import { TransformationStory } from '@/sections/TransformationStory/TransformationStory';
 import { CategoryCoverflow } from '@/sections/CategoryCoverflow/CategoryCoverflow';
 import { ChannelGrid } from '@/sections/ChannelGrid/ChannelGrid';
@@ -19,6 +20,7 @@ function App() {
         <main id="main-content" tabIndex={-1}>
           <CommercialHero />
           <TrustMarquee />
+          <ArtisanShowcase />
           <TransformationStory />
           <CategoryCoverflow />
           <ChannelGrid />
