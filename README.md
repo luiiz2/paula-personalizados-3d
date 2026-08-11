@@ -6,7 +6,7 @@ Repositório privado: `https://github.com/luiiz2/paula-personalizados-3d`
 
 ## Estado atual
 
-- Landing page comercial curta montada na ordem Header → Hero → Marquee → Transformação → Categorias → Canais → Encerramento → Footer.
+- Landing page comercial editorial montada na ordem Header → Hero → Marquee → ArtisanShowcase → Transformação → Categorias → Canais → Encerramento → Footer.
 - Build de produção aprovado.
 - Lint e testes automatizados aprovados.
 - 42 fotos públicas incluídas corretamente no build.
@@ -107,6 +107,7 @@ npm run build
 | Textos, categorias e imagens da experiência comercial | `src/data/commercial.ts` |
 | Seções e ordem da página | `src/App.tsx` |
 | Hero e faixa de confiança | `src/sections/CommercialHero/` |
+| Showcase artesanal em painel carvão | `src/sections/ArtisanShowcase/` |
 | Transformação da foto para o 3D | `src/sections/TransformationStory/` |
 | Categorias e coverflow | `src/sections/CategoryCoverflow/` |
 | Canais comerciais | `src/sections/ChannelGrid/` |
@@ -120,6 +121,21 @@ npm run build
 | Testes | arquivos `*.test.ts` e `*.test.tsx` |
 | Pipeline do GitHub | `.github/workflows/ci.yml` |
 | Launcher independente do PATH no Windows | `project.cmd` e `scripts/project.ps1` |
+
+## Experiência editorial atual
+
+A jornada comercial usa capítulos de viewport e segue esta ordem: Hero com três produtos, faixa horizontal de confiança, `ArtisanShowcase` em painel carvão, transformação FOTO → TRANSFORMAÇÃO → PEÇA 3D, categorias em bento no desktop e coverflow no mobile, canais comerciais, encerramento emocional e Footer.
+
+A narrativa de transformação usa assets reais centralizados em `src/data/commercial.ts`:
+
+- foto de referência: `/assets/photo_2026-07-26_18-37-49.jpg`;
+- resultado personalizado: `/assets/photo_2026-07-20_12-15-36.jpg`.
+
+Para trocar qualquer fotografia da experiência, altere o respectivo objeto `CommercialImageAsset` em `src/data/commercial.ts`, mantendo `src`, `alt` verdadeiro e, quando necessário, `objectPosition`. O markup das seções não precisa ser modificado para uma simples substituição de imagem.
+
+Depoimentos não fazem parte da experiência atual porque ainda não existem relatos reais aprovados para publicação. Não crie avaliações, nomes ou falas fictícias para preencher essa ausência.
+
+A transformação é uma narrativa visual feita com fotografias reais, CSS e GSAP. O projeto decidiu não usar `img2threejs`, Three.js ou WebGL: não há reconstrução 3D ao vivo, e essas dependências acrescentariam peso e complexidade sem melhorar a representação fiel do trabalho artesanal.
 
 ## Como alterar links externos
 
