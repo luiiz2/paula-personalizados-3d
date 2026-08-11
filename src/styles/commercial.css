@@ -1,3 +1,21 @@
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 0.75rem;
+  color: #fff;
+  background: #27201f;
+  font-weight: 700;
+  transform: translateY(-6rem);
+  transition: transform 180ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 .commercial-site {
   min-height: 100vh;
   color: var(--color-ink);

@@ -6,7 +6,7 @@ Repositório privado: `https://github.com/luiiz2/paula-personalizados-3d`
 
 ## Estado atual
 
-- Aplicação React + TypeScript funcionando.
+- Landing page comercial curta montada na ordem Header → Hero → Marquee → Transformação → Categorias → Canais → Encerramento → Footer.
 - Build de produção aprovado.
 - Lint e testes automatizados aprovados.
 - 42 fotos públicas incluídas corretamente no build.
@@ -104,12 +104,16 @@ npm run build
 | Necessidade | Arquivo ou pasta |
 | --- | --- |
 | Links do Instagram, WhatsApp, Shopee e Mercado Livre | `src/data/links.ts` |
-| Produtos, descrições, imagens e botões de compra | `src/data/products.ts` |
-| Fotos, textos alternativos e categorias da galeria | `src/data/gallery.ts` |
-| Seções e ordem da página | `src/App.tsx` e `src/sections/` |
+| Textos, categorias e imagens da experiência comercial | `src/data/commercial.ts` |
+| Seções e ordem da página | `src/App.tsx` |
+| Hero e faixa de confiança | `src/sections/CommercialHero/` |
+| Transformação da foto para o 3D | `src/sections/TransformationStory/` |
+| Categorias e coverflow | `src/sections/CategoryCoverflow/` |
+| Canais comerciais | `src/sections/ChannelGrid/` |
+| Encerramento emocional | `src/sections/MemoryClosing/` |
 | Cabeçalho e menu mobile | `src/components/Header/Header.tsx` |
 | Rodapé, telefone e canais | `src/sections/Footer/Footer.tsx` |
-| Cores, fontes, tamanhos e estilos globais | `src/index.css` |
+| Cores, fontes, tamanhos e estilos globais | `src/index.css` e `src/styles/commercial.css` |
 | Título, descrição e metatags sociais | `index.html` |
 | Fotos públicas | `public/assets/` |
 | Componentes reutilizáveis | `src/components/` |
@@ -138,56 +142,16 @@ Regras:
 - Links renderizados pelo componente `ExternalLink` já usam `target="_blank"` e proteção `noopener noreferrer`.
 - Não adicione `window.open()` ao `ExternalLink`, pois isso pode abrir duas abas.
 
-## Como alterar produtos
-
-Os produtos ficam em `src/data/products.ts`.
-
-Campos disponíveis:
-
-```ts
-{
-  id: 'identificador-unico',
-  name: 'Nome visível',
-  category: 'Categoria',
-  description: 'Descrição curta',
-  image: '/assets/nome-da-foto.jpg',
-  featured: true,
-  shopeeUrl: '',
-  mercadoLivreUrl: '',
-  whatsappUrl: 'URL_REAL'
-}
-```
-
-Regras:
-
-- `id` não pode se repetir.
-- Use `featured: true` para exibir o produto na seção de destaques.
-- Deixe links indisponíveis como string vazia.
-- A imagem deve existir dentro de `public/assets/`.
-- Depois da alteração, execute os testes; existe um teste que verifica referências de imagens quebradas.
-
-## Como alterar a galeria
-
-Edite `src/data/gallery.ts`.
-
-Cada item possui:
-
-- `id`: identificador único.
-- `image`: caminho iniciado por `/assets/`.
-- `alt`: descrição verdadeira e útil para acessibilidade.
-- `aspect`: proporção visual (`2:3`, `1:1`, `4:3` ou `3:4`).
-- `category`: categoria usada na etiqueta da foto.
-
-A página exibe inicialmente os 12 primeiros itens. Para alterar essa quantidade, ajuste `gallery.slice(0, 12)` em `src/sections/Gallery/Gallery.tsx`.
-
 ## Como adicionar ou trocar fotos
 
 1. Coloque o arquivo em `public/assets/`.
 2. Prefira nomes simples, minúsculos e sem espaços, por exemplo `boneca-personalizada-rosa.webp`.
-3. Atualize a referência em `src/data/products.ts`, `src/data/gallery.ts` ou na seção correspondente.
+3. Atualize os registros `CommercialImageAsset` em `src/data/commercial.ts`.
 4. Escreva um texto `alt` que descreva o conteúdo real.
 5. Execute `npm test` e `npm run build`.
 6. Confirme que a foto também existe em `dist/assets/` depois do build.
+
+As fotografias finais podem ser substituídas somente nesses registros, sem alterar o markup dos componentes.
 
 Não coloque fotos na pasta `assets/` da raiz. URLs `/assets/...` só são copiadas automaticamente quando os arquivos estão em `public/assets/`.
 
@@ -203,7 +167,16 @@ Não coloque fotos na pasta `assets/` da raiz. URLs `/assets/...` só são copia
 ├── src/
 │   ├── components/
 │   ├── data/
+│   │   ├── commercial.ts
+│   │   └── links.ts
 │   ├── sections/
+│   │   ├── CommercialHero/
+│   │   ├── TransformationStory/
+│   │   ├── CategoryCoverflow/
+│   │   ├── ChannelGrid/
+│   │   └── MemoryClosing/
+│   ├── styles/
+│   │   └── commercial.css
 │   ├── test/
 │   ├── App.tsx
 │   ├── index.css
@@ -232,6 +205,9 @@ Não coloque fotos na pasta `assets/` da raiz. URLs `/assets/...` só são copia
 
 - Segurança e comportamento básico de links externos.
 - Abertura e fechamento acessível do menu mobile.
+- Composição da jornada comercial, com um único `<h1>` e os headings principais.
+- Hero, transformação, coverflow, canais, encerramento e smooth scroll.
+- Integridade dos dados comerciais e da mensagem do WhatsApp.
 - Verificação de que todas as URLs `/assets/...` apontam para arquivos existentes em `public/`.
 
 Ao corrigir um bug, adicione um teste que falharia antes da correção sempre que isso for viável.
