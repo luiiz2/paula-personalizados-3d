@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 const stylesheet = readFileSync(resolve('src/styles/commercial.css'), 'utf8');
 
 const WHITE = '#ffffff';
+const INK_PANEL = '#111111';
 
 function relativeLuminance(hex: string) {
   const channels = hex
@@ -64,5 +65,20 @@ describe('commercial CTA contrast', () => {
     surfaceColors.forEach((surface) => {
       expect(contrastRatio(WHITE, surface), `${selector} on ${surface}`).toBeGreaterThanOrEqual(4.5);
     });
+  });
+
+  it.each([
+    '.commercial-footer__channel',
+    '.commercial-footer a:hover',
+    '.commercial-footer a:focus-visible',
+  ])('%s keeps footer text at WCAG AA contrast', (selector) => {
+    const [foreground] = colorsFor(selector);
+
+    expect(foreground).toBeDefined();
+    if (!foreground) return;
+
+    expect(contrastRatio(foreground, INK_PANEL), `${selector} on ${INK_PANEL}`).toBeGreaterThanOrEqual(
+      4.5,
+    );
   });
 });

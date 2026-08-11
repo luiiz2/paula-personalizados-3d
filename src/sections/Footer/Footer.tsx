@@ -30,7 +30,12 @@ export function Footer() {
         {commercialChannels
           .filter((channel) => hasLink(channel.key))
           .map((channel) => (
-            <ExternalLink key={channel.key} href={channel.href} showIcon={false}>
+            <ExternalLink
+              key={channel.key}
+              href={channel.href}
+              showIcon={false}
+              className="commercial-footer__channel"
+            >
               {channel.label}
             </ExternalLink>
           ))}

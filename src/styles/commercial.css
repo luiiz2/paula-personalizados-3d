@@ -1256,6 +1256,10 @@
   gap: 0.65rem 1rem;
 }
 
+.commercial-footer__channel {
+  color: #fff8f4;
+}
+
 .commercial-footer p {
   grid-column: 1 / -1;
   margin: 0;
