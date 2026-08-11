@@ -27,34 +27,53 @@ export const trustMessages = [
   'Produção artesanal',
 ] as const;
 
-export const heroAssets: CommercialImageAsset[] = [
-  {
+export const brandAsset: CommercialImageAsset = {
+  src: '/assets/photo_2026-08-09_20-14-06.jpg',
+  alt: 'Logo Paula Personalizados 3D',
+  objectPosition: '50% 50%',
+};
+
+export const artisanShowcaseAssets = {
+  primary: {
+    src: '/assets/photo_2026-07-23_10-07-08.jpg',
+    alt: 'Personagem feminina personalizada com vestido elegante',
+    objectPosition: '50% 44%',
+  },
+  secondary: {
     src: '/assets/photo_2026-08-09_20-15-54.jpg',
-    alt: 'Pai e filho representados em uma peça personalizada 3D',
+    alt: 'Pai e filho representados em uma lembrança personalizada',
     objectPosition: '50% 58%',
   },
+} satisfies Record<'primary' | 'secondary', CommercialImageAsset>;
+
+export const heroAssets: CommercialImageAsset[] = [
   {
-    src: '/assets/photo_2026-08-09_20-13-47.jpg',
-    alt: 'Desenho infantil ao lado da peça criada a partir dele',
-    objectPosition: '55% 50%',
+    src: '/assets/photo_2026-07-20_12-15-36.jpg',
+    alt: 'Miniatura 3D personalizada de uma mulher com óculos',
+    objectPosition: '50% 50%',
   },
   {
-    src: '/assets/photo_2026-08-09_20-13-33.jpg',
-    alt: 'Boneco personalizado em estilo colecionável',
-    objectPosition: '50% 48%',
+    src: '/assets/photo_2026-07-23_10-07-08.jpg',
+    alt: 'Personagem feminina personalizada com vestido elegante',
+    objectPosition: '50% 44%',
+  },
+  {
+    src: '/assets/photo_2026-08-09_20-15-54.jpg',
+    alt: 'Pai e filho representados em uma lembrança personalizada',
+    objectPosition: '50% 58%',
   },
 ];
 
 export const transformationStory = {
   source: {
-    src: '/assets/photo_2026-08-09_20-13-47.jpg',
-    alt: 'Referência original usada para criar uma peça 3D',
-    objectPosition: '28% 50%',
+    src: '/assets/photo_2026-07-26_18-37-49.jpg',
+    alt: 'Referência original: fotografia de uma mulher em um evento',
+    objectPosition: '52% 50%',
   },
   result: {
-    src: '/assets/photo_2026-08-09_20-13-42.jpg',
-    alt: 'Resultado personalizado criado em 3D',
-    objectPosition: '70% 50%',
+    src: '/assets/photo_2026-07-20_12-15-36.jpg',
+    alt: 'Resultado personalizado: miniatura 3D criada a partir da fotografia',
+    objectPosition: '50% 50%',
   },
 } satisfies Record<'source' | 'result', CommercialImageAsset>;
 
@@ -64,7 +83,7 @@ export const commercialCategories: CommercialCategory[] = [
     title: 'Miniaturas da sua foto',
     image: {
       src: '/assets/photo_2026-08-09_20-13-26.jpg',
-      alt: 'Miniatura criada a partir de uma fotografia',
+      alt: 'Foto de referência ao lado de uma miniatura 3D personalizada',
       objectPosition: '50% 50%',
     },
   },
@@ -73,12 +92,12 @@ export const commercialCategories: CommercialCategory[] = [
     title: 'Do desenho para a vida em 3D',
     image: {
       src: '/assets/photo_2026-08-09_20-13-47.jpg',
-      alt: 'Desenho infantil usado como referência',
+      alt: 'Desenho infantil e peça personalizada inspirada nele',
       objectPosition: '30% 50%',
     },
     revealImage: {
       src: '/assets/photo_2026-08-09_20-13-42.jpg',
-      alt: 'Peça 3D pronta criada a partir do desenho',
+      alt: 'Criança segurando uma peça personalizada inspirada em seu desenho',
       objectPosition: '72% 50%',
     },
   },

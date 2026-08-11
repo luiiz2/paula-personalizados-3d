@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  artisanShowcaseAssets,
+  brandAsset,
   commercialCategories,
   commercialChannels,
   heroAssets,
@@ -25,5 +27,27 @@ describe('commercial landing data', () => {
     expect(
       commercialCategories.find(({ id }) => id === 'desenho-3d')?.revealImage,
     ).toBeDefined();
+  });
+
+  it('uses the approved real photo and matching 3D result', () => {
+    expect(transformationStory.source.src).toBe('/assets/photo_2026-07-26_18-37-49.jpg');
+    expect(transformationStory.result.src).toBe('/assets/photo_2026-07-20_12-15-36.jpg');
+    expect(transformationStory.source.src).not.toBe(transformationStory.result.src);
+  });
+
+  it('keeps the official logo and two showcase assets explicit', () => {
+    expect(brandAsset.src).toBe('/assets/photo_2026-08-09_20-14-06.jpg');
+    expect(artisanShowcaseAssets.primary.alt).toMatch(/personagem feminina/i);
+    expect(artisanShowcaseAssets.secondary.alt).toMatch(/pai e filho/i);
+  });
+
+  it('keeps exactly four unique commercial categories', () => {
+    expect(commercialCategories.map(({ id }) => id)).toEqual([
+      'foto-3d',
+      'desenho-3d',
+      'bonecos',
+      'lembrancas',
+    ]);
+    expect(new Set(heroAssets.map(({ src }) => src)).size).toBe(heroAssets.length);
   });
 });
