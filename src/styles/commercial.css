@@ -809,6 +809,12 @@
     opacity 550ms var(--ease-soft);
 }
 
+.category-coverflow__reveal-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .category-coverflow__slide {
   position: relative;
   overflow: hidden;

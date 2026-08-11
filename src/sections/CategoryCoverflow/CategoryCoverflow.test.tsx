@@ -23,6 +23,18 @@ describe('CategoryCoverflow', () => {
     );
   });
 
+  it('keeps responsive shell transforms isolated from reveal transforms', () => {
+    const { container } = render(<CategoryCoverflow />);
+    const shells = [...container.querySelectorAll('.category-coverflow__slide-shell')];
+    const revealTargets = [...container.querySelectorAll('[data-reveal-card]')];
+
+    expect(revealTargets).toHaveLength(4);
+    expect(shells).toHaveLength(4);
+    expect(revealTargets.every((target, index) => shells[index]?.contains(target))).toBe(true);
+    expect(revealTargets.some((target) => target.classList.contains('category-coverflow__slide-shell')))
+      .toBe(false);
+  });
+
   it('wraps slide offsets around the shortest path', () => {
     expect(circularOffset(3, 0, 4)).toBe(-1);
     expect(circularOffset(0, 3, 4)).toBe(1);

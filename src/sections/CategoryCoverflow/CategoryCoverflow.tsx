@@ -158,47 +158,50 @@ export function CategoryCoverflow() {
               data-active={active}
               data-bento-size={bentoSizes[index]}
               data-revealed={active && revealResult}
-              data-reveal-card
             >
-              <button
-                type="button"
-                className="category-coverflow__slide"
-                aria-current={active ? 'true' : undefined}
-                aria-label={category.title}
-                tabIndex={active ? 0 : -1}
-                onClick={(event) => onSlideClick(event, index)}
-              >
-                <CommercialImage
-                  asset={category.image}
-                  sizes="(max-width: 767px) 72vw, 24vw"
-                  decorative={active && revealResult}
-                />
-                {category.revealImage ? (
-                  <CommercialImage
-                    asset={category.revealImage}
-                    sizes="(max-width: 767px) 72vw, 24vw"
-                    className="category-coverflow__reveal"
-                    decorative={!active || !revealResult}
-                  />
-                ) : null}
-                <span className="category-coverflow__label">{category.title}</span>
-                <span className="category-coverflow__arrow" aria-hidden="true">
-                  →
-                </span>
-              </button>
-
-              {active && category.revealImage ? (
+              <div className="category-coverflow__reveal-frame" data-reveal-card>
                 <button
                   type="button"
-                  className="category-coverflow__compare"
-                  aria-label={revealResult ? 'Mostrar desenho original' : 'Mostrar peça 3D pronta'}
-                  aria-pressed={revealResult}
-                  onPointerDown={(event) => event.stopPropagation()}
-                  onClick={() => setRevealResult((value) => !value)}
+                  className="category-coverflow__slide"
+                  aria-current={active ? 'true' : undefined}
+                  aria-label={category.title}
+                  tabIndex={active ? 0 : -1}
+                  onClick={(event) => onSlideClick(event, index)}
                 >
-                  {revealResult ? 'Ver desenho' : 'Ver resultado'}
+                  <CommercialImage
+                    asset={category.image}
+                    sizes="(max-width: 767px) 72vw, 24vw"
+                    decorative={active && revealResult}
+                  />
+                  {category.revealImage ? (
+                    <CommercialImage
+                      asset={category.revealImage}
+                      sizes="(max-width: 767px) 72vw, 24vw"
+                      className="category-coverflow__reveal"
+                      decorative={!active || !revealResult}
+                    />
+                  ) : null}
+                  <span className="category-coverflow__label">{category.title}</span>
+                  <span className="category-coverflow__arrow" aria-hidden="true">
+                    →
+                  </span>
                 </button>
-              ) : null}
+
+                {active && category.revealImage ? (
+                  <button
+                    type="button"
+                    className="category-coverflow__compare"
+                    aria-label={
+                      revealResult ? 'Mostrar desenho original' : 'Mostrar peça 3D pronta'
+                    }
+                    aria-pressed={revealResult}
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={() => setRevealResult((value) => !value)}
+                  >
+                    {revealResult ? 'Ver desenho' : 'Ver resultado'}
+                  </button>
+                ) : null}
+              </div>
             </div>
           );
         })}
