@@ -19,20 +19,20 @@ export function CommercialHero() {
       const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
       timeline
         .from('[data-hero-line]', {
-          y: 70,
+          y: 48,
           opacity: 0,
-          duration: 0.8,
-          stagger: 0.12,
+          duration: 0.95,
+          stagger: 0.1,
         })
         .from(
           '[data-hero-support]',
-          { y: 24, opacity: 0, duration: 0.55 },
-          '-=0.4',
+          { y: 18, opacity: 0, duration: 0.65 },
+          '-=0.5',
         )
         .from(
           '[data-hero-media]',
-          { y: 35, opacity: 0, scale: 0.94, duration: 0.75, stagger: 0.1 },
-          '-=0.5',
+          { y: 28, opacity: 0, scale: 0.97, duration: 0.9, stagger: 0.12 },
+          '-=0.6',
         );
 
       return () => timeline.kill();
@@ -44,7 +44,7 @@ export function CommercialHero() {
     <section
       ref={sectionRef}
       id="hero"
-      className="commercial-hero"
+      className="commercial-hero editorial-panel editorial-panel--cream"
       aria-labelledby="commercial-hero-title"
     >
       <div className="commercial-hero__copy">
@@ -54,17 +54,17 @@ export function CommercialHero() {
         <h1
           id="commercial-hero-title"
           className="commercial-hero__title"
-          aria-label="Personalizados 3D que viram memórias."
+          aria-label="Memórias que ganham forma."
         >
-          <span data-hero-line>Personalizados</span>
-          <span data-hero-line>3D que viram</span>
-          <span className="gradient-shimmer" data-hero-line>
-            memórias.
+          <span data-hero-line>Memórias</span>
+          <span className="commercial-hero__accent" data-hero-line>
+            que ganham
           </span>
+          <span data-hero-line>forma.</span>
         </h1>
         <p className="commercial-hero__support" data-hero-support>
-          Transformamos fotos, desenhos e ideias em peças únicas, feitas para guardar o que
-          realmente importa.
+          <span>Fotos, desenhos e ideias viram peças únicas.</span>
+          <span>Feitas à mão para guardar histórias.</span>
         </p>
         <div className="commercial-hero__actions" data-hero-support>
           {hasLink('whatsapp') && (
@@ -76,8 +76,8 @@ export function CommercialHero() {
               Quero criar <span aria-hidden="true">→</span>
             </ExternalLink>
           )}
-          <a href="#como-funciona" className="commercial-button commercial-button--ghost">
-            Como funciona <span aria-hidden="true">↘</span>
+          <a href="#categorias" className="commercial-button commercial-button--ghost">
+            Ver categorias <span aria-hidden="true">↘</span>
           </a>
         </div>
       </div>

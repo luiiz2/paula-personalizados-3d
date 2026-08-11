@@ -1,28 +1,29 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { links } from '@/data/links';
 import { CommercialHero } from './CommercialHero';
 import { TrustMarquee } from './TrustMarquee';
 
 describe('CommercialHero', () => {
   it('presents the approved headline and conversion paths', () => {
-    render(<CommercialHero />);
+    const { container } = render(<CommercialHero />);
 
     expect(
       screen.getByRole('heading', {
         level: 1,
-        name: /personalizados 3d que viram memórias/i,
+        name: 'Memórias que ganham forma.',
       }),
     ).toBeVisible();
     expect(screen.getByRole('link', { name: /quero criar/i })).toHaveAttribute(
       'href',
-      links.whatsapp,
+      expect.stringContaining('wa.me'),
     );
-    expect(screen.getByRole('link', { name: /como funciona/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /ver categorias/i })).toHaveAttribute(
       'href',
-      '#como-funciona',
+      '#categorias',
     );
     expect(screen.getAllByRole('img')).toHaveLength(3);
+    expect(container.querySelectorAll('[data-hero-line]')).toHaveLength(3);
+    expect(container.querySelectorAll('[data-hero-media]')).toHaveLength(3);
   });
 
   it('exposes the trust message once to assistive technology', () => {
