@@ -5,12 +5,16 @@
    ============================================================ */
 @theme {
   /* Colors */
-  --color-cream: #faf7f4; /* fundo principal off-white quente */
-  --color-pink: #e89ab6; /* rosa principal */
-  --color-pink-soft: #f8dde7; /* rosa claro */
-  --color-ink: #171717; /* preto */
+  --color-cream: #f4ede6; /* fundo principal off-white quente */
+  --color-cream-light: #fffaf6;
+  --color-pink: #cc5270; /* rosa principal */
+  --color-pink-soft: #f2d4d8; /* rosa claro */
+  --color-wine: #973149;
+  --color-ink: #171313; /* preto */
+  --color-ink-panel: #111111;
+  --color-ink-soft: #fff8f4;
   --color-mute: #747474; /* cinza */
-  --color-white: #ffffff;
+  --color-white: #fffaf6;
 
   /* Fonts */
   --font-sans: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;

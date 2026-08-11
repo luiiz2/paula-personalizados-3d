@@ -3,6 +3,11 @@ export interface MotionCapabilities {
   reducedMotion: boolean;
 }
 
+export interface EditorialPanelCapabilities {
+  width: number;
+  reducedMotion: boolean;
+}
+
 export interface PointerOffset {
   x: number;
   y: number;
@@ -13,6 +18,13 @@ export function shouldEnhanceMotion({
   reducedMotion,
 }: MotionCapabilities): boolean {
   return finePointer && !reducedMotion;
+}
+
+export function shouldPinEditorialPanel({
+  width,
+  reducedMotion,
+}: EditorialPanelCapabilities): boolean {
+  return width >= 960 && !reducedMotion;
 }
 
 export function pointerOffset(
