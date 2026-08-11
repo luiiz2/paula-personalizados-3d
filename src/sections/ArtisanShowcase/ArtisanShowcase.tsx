@@ -14,51 +14,63 @@ export function ArtisanShowcase() {
 
   useGSAP(
     () => {
-      if (
-        !shouldPinEditorialPanel({
-          width: window.innerWidth,
-          reducedMotion: prefersReducedMotion(),
-        })
-      ) {
-        return;
-      }
+      const media = gsap.matchMedia();
 
-      const timeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: '+=90%',
-          pin: '[data-artisan-stage]',
-          pinSpacing: true,
-          scrub: 0.8,
+      media.add(
+        {
+          desktop: '(min-width: 960px)',
+          reducedMotion: '(prefers-reduced-motion: reduce)',
         },
-      });
+        () => {
+          if (
+            !shouldPinEditorialPanel({
+              width: window.innerWidth,
+              reducedMotion: prefersReducedMotion(),
+            })
+          ) {
+            return;
+          }
 
-      timeline
-        .fromTo(
-          '[data-artisan-product]:first-child',
-          { rotateY: -20, y: 20, scale: 0.96 },
-          { rotateY: 0, y: 0, scale: 1, ease: 'none' },
-          0,
-        )
-        .fromTo(
-          '[data-artisan-product]:last-child',
-          { rotateY: 20, y: 20, scale: 0.96 },
-          { rotateY: 0, y: 0, scale: 1, ease: 'none' },
-          0,
-        )
-        .from(
-          '[data-artisan-proof]',
-          { y: 18, opacity: 0, stagger: 0.08, ease: 'power2.out' },
-          0.25,
-        );
+          const timeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top top',
+              end: '+=90%',
+              pin: '[data-artisan-stage]',
+              pinSpacing: true,
+              scrub: 0.8,
+            },
+          });
 
-      const scrollTrigger = timeline.scrollTrigger;
+          timeline
+            .fromTo(
+              '[data-artisan-product]:first-child',
+              { rotateY: -20, y: 20, scale: 0.96 },
+              { rotateY: 0, y: 0, scale: 1, ease: 'none' },
+              0,
+            )
+            .fromTo(
+              '[data-artisan-product]:last-child',
+              { rotateY: 20, y: 20, scale: 0.96 },
+              { rotateY: 0, y: 0, scale: 1, ease: 'none' },
+              0,
+            )
+            .from(
+              '[data-artisan-proof]',
+              { y: 18, opacity: 0, stagger: 0.08, ease: 'power2.out' },
+              0.25,
+            );
 
-      return () => {
-        scrollTrigger?.kill();
-        timeline.kill();
-      };
+          const scrollTrigger = timeline.scrollTrigger;
+
+          return () => {
+            scrollTrigger?.kill();
+            timeline.kill();
+          };
+        },
+      );
+
+      return () => media.revert();
     },
     { scope: sectionRef },
   );
