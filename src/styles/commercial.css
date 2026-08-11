@@ -580,7 +580,7 @@
 
 .transformation-story__copy h2 {
   margin: 0.6rem 0 1.2rem;
-  font: 900 clamp(3.3rem, 6.6vw, 7.5rem) / 0.82 var(--font-display);
+  font: 900 clamp(3.3rem, 6.6vw, 7.5rem) / 0.82 var(--font-editorial);
   letter-spacing: -0.045em;
   text-transform: uppercase;
 }

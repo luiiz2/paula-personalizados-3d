@@ -1,11 +1,26 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { links } from '@/data/links';
 import { TransformationStory } from './TransformationStory';
 
+const stylesheet = readFileSync(resolve('src/styles/commercial.css'), 'utf8');
+
 afterEach(cleanup);
 
 describe('TransformationStory', () => {
+  it('uses the editorial typeface for the complete transformation heading', () => {
+    const headingRule = stylesheet
+      .split('}')
+      .map((rule) => rule.split('{'))
+      .find(([selector]) => selector.trim() === '.transformation-story__copy h2')?.[1];
+
+    expect(headingRule).toMatch(
+      /font(?:-family)?:[^;]*var\(--font-editorial\)/,
+    );
+  });
+
   it('tells the transformation with three stages and two truthful informative images', () => {
     const { container } = render(<TransformationStory />);
 
