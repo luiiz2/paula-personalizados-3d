@@ -190,6 +190,7 @@ export function CategoryCoverflow() {
                   className="category-coverflow__compare"
                   aria-label={revealResult ? 'Mostrar desenho original' : 'Mostrar peça 3D pronta'}
                   aria-pressed={revealResult}
+                  onPointerDown={(event) => event.stopPropagation()}
                   onClick={() => setRevealResult((value) => !value)}
                 >
                   {revealResult ? 'Ver desenho' : 'Ver resultado'}

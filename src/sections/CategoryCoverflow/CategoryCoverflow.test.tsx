@@ -108,4 +108,19 @@ describe('CategoryCoverflow', () => {
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-pressed', 'true');
   });
+
+  it('keeps comparison pointer interaction isolated from carousel drag', () => {
+    render(<CategoryCoverflow />);
+    fireEvent.click(screen.getByRole('button', { name: /do desenho para a vida em 3d/i }));
+    const carousel = screen.getByRole('region', { name: /categorias de personalizados/i });
+    const toggle = screen.getByRole('button', { name: /mostrar peça 3d pronta/i });
+
+    fireEvent.pointerDown(toggle, { clientX: 100, pointerId: 1 });
+    fireEvent.pointerUp(carousel, { clientX: 40, pointerId: 1 });
+    fireEvent.click(toggle);
+
+    expect(screen.getByText('2 de 4')).toBeVisible();
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    expect(toggle).toHaveAccessibleName(/mostrar desenho original/i);
+  });
 });
