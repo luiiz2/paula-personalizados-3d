@@ -1,7 +1,7 @@
 # Redesign comercial da landing page — Paula Personalizados 3D
 
-**Data:** 10 de agosto de 2026  
-**Status:** aprovado para planejamento  
+**Data:** 10 de agosto de 2026
+**Status:** aprovado para planejamento
 **Escopo:** substituir a landing page atual por uma experiência comercial curta, moderna e orientada à conversão.
 
 ## Objetivo
@@ -68,8 +68,8 @@ Cabeçalho compacto e levemente translúcido, com logo, âncoras para “Como fu
 
 Headline:
 
-> PERSONALIZADOS  
-> 3D QUE VIRAM  
+> PERSONALIZADOS
+> 3D QUE VIRAM
 > MEMÓRIAS.
 
 Texto de apoio: “Transformamos fotos, desenhos e ideias em peças únicas, feitas para guardar o que realmente importa.”
