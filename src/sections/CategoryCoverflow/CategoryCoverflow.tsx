@@ -20,6 +20,8 @@ export function circularOffset(index: number, activeIndex: number, length: numbe
   return offset;
 }
 
+const bentoSizes = ['feature', 'wide', 'standard', 'standard'] as const;
+
 export function CategoryCoverflow() {
   const sectionRef = useSectionReveal<HTMLElement>('[data-reveal-card]');
   const [activeIndex, setActiveIndex] = useState(0);
@@ -154,6 +156,7 @@ export function CategoryCoverflow() {
               className="category-coverflow__slide-shell"
               style={shellStyle}
               data-active={active}
+              data-bento-size={bentoSizes[index]}
               data-revealed={active && revealResult}
               data-reveal-card
             >

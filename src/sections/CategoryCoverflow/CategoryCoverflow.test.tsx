@@ -8,6 +8,21 @@ afterEach(() => {
 });
 
 describe('CategoryCoverflow', () => {
+  it('assigns four editorial bento areas without losing the carousel contract', () => {
+    const { container } = render(<CategoryCoverflow />);
+
+    expect(container.querySelectorAll('[data-bento-size]')).toHaveLength(4);
+    expect(
+      [...container.querySelectorAll('[data-bento-size]')].map((node) =>
+        node.getAttribute('data-bento-size'),
+      ),
+    ).toEqual(['feature', 'wide', 'standard', 'standard']);
+    expect(screen.getByRole('region', { name: 'Categorias de personalizados' })).toHaveAttribute(
+      'aria-roledescription',
+      'carrossel',
+    );
+  });
+
   it('wraps slide offsets around the shortest path', () => {
     expect(circularOffset(3, 0, 4)).toBe(-1);
     expect(circularOffset(0, 3, 4)).toBe(1);
