@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ExternalLink } from '@/components/ui/ExternalLink';
 import { cn, lockBodyScroll } from '@/lib/utils';
 import { Menu, X } from 'lucide-react';
-import { links } from '@/data/links';
+import { hasLink, links } from '@/data/links';
 
 const navItems = [
   { label: 'Início', href: '#hero' },
@@ -153,13 +153,15 @@ export function Header() {
               ))}
             </ul>
 
-            <ExternalLink
-              href={links.whatsapp}
-              showIcon={false}
-              className="commercial-button commercial-button--rose"
-            >
-              Criar personalizado <span aria-hidden="true">→</span>
-            </ExternalLink>
+            {hasLink('whatsapp') && (
+              <ExternalLink
+                href={links.whatsapp}
+                showIcon={false}
+                className="commercial-button commercial-button--rose"
+              >
+                Criar personalizado <span aria-hidden="true">→</span>
+              </ExternalLink>
+            )}
           </div>
 
           {/* Mobile Hamburger */}
@@ -221,14 +223,16 @@ export function Header() {
                   </li>
                 ))}
               </ul>
-              <ExternalLink
-                href={links.whatsapp}
-                showIcon={false}
-                className="commercial-button commercial-button--rose mt-8 w-full"
-                onClick={closeMobile}
-              >
-                Criar personalizado <span aria-hidden="true">→</span>
-              </ExternalLink>
+              {hasLink('whatsapp') && (
+                <ExternalLink
+                  href={links.whatsapp}
+                  showIcon={false}
+                  className="commercial-button commercial-button--rose mt-8 w-full"
+                  onClick={closeMobile}
+                >
+                  Criar personalizado <span aria-hidden="true">→</span>
+                </ExternalLink>
+              )}
             </nav>
           </div>
         </div>

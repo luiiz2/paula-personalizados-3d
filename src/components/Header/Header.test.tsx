@@ -23,6 +23,28 @@ describe('Header', () => {
     );
   });
 
+  it('does not render WhatsApp CTAs when the channel is unavailable', () => {
+    const configuredWhatsapp = links.whatsapp;
+    Object.defineProperty(links, 'whatsapp', { value: '' });
+
+    try {
+      render(<Header />);
+
+      expect(
+        screen.queryByText(/criar personalizado/i, { selector: 'a' }),
+      ).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: 'Abrir menu' }));
+      const dialog = screen.getByRole('dialog', { name: 'Menu de navegação' });
+
+      expect(
+        within(dialog).queryByText(/criar personalizado/i, { selector: 'a' }),
+      ).not.toBeInTheDocument();
+    } finally {
+      Object.defineProperty(links, 'whatsapp', { value: configuredWhatsapp });
+    }
+  });
+
   it('closes the mobile dialog with Escape and restores trigger focus', async () => {
     render(<Header />);
 
