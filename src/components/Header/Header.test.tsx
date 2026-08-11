@@ -1,8 +1,28 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
+import { links } from '@/data/links';
 import { Header } from './Header';
 
+afterEach(cleanup);
+
 describe('Header', () => {
+  it('uses the commercial anchors and general WhatsApp CTA', () => {
+    render(<Header />);
+
+    expect(screen.getByRole('link', { name: 'Como funciona' })).toHaveAttribute(
+      'href',
+      '#como-funciona',
+    );
+    expect(screen.getByRole('link', { name: 'Categorias' })).toHaveAttribute(
+      'href',
+      '#categorias',
+    );
+    expect(screen.getByRole('link', { name: /criar personalizado/i })).toHaveAttribute(
+      'href',
+      links.whatsapp,
+    );
+  });
+
   it('closes the mobile dialog with Escape and restores trigger focus', async () => {
     render(<Header />);
 
