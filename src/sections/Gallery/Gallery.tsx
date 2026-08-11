@@ -80,18 +80,20 @@ export function Gallery() {
 
         <div className="mt-12 columns-2 gap-3 md:mt-16 md:columns-3 md:gap-5 lg:columns-4" role="list" aria-label="Galeria de trabalhos">
           {displayedGallery.map((item, i) => (
-            <a
+            <div
               key={item.id}
               ref={(el) => { itemRefs.current[i] = el; }}
-              href={links.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Ver ${item.alt} no Instagram`}
-              className="group relative mb-3 w-full break-inside-avoid overflow-hidden rounded-2xl bg-ink/5 md:mb-5"
-              style={{ aspectRatio: item.aspect }}
               role="listitem"
+              className="relative mb-3 w-full break-inside-avoid md:mb-5"
+              style={{ aspectRatio: item.aspect }}
             >
-              <div className="relative w-full h-full overflow-hidden">
+              <a
+                href={links.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Ver ${item.alt} no Instagram`}
+                className="group relative block h-full w-full overflow-hidden rounded-2xl bg-ink/5"
+              >
                 <Image
                   src={item.image}
                   alt={item.alt}
@@ -116,8 +118,8 @@ export function Gallery() {
                 <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/90 backdrop-blur text-xs font-sans font-medium text-ink/80 border border-ink/10">
                   {item.category}
                 </div>
-              </div>
-            </a>
+              </a>
+            </div>
           ))}
         </div>
 

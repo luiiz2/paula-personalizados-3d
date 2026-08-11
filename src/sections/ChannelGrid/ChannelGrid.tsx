@@ -3,6 +3,7 @@ import { MessageCircle, ShoppingBag, Store } from 'lucide-react';
 import { ExternalLink } from '@/components/ui/ExternalLink';
 import { InstagramIcon } from '@/components/ui/CustomIcons';
 import { commercialChannels, type CommercialChannel } from '@/data/commercial';
+import { hasLink } from '@/data/links';
 import { useSectionReveal } from '@/hooks/useSectionReveal';
 
 const icons: Record<
@@ -30,26 +31,28 @@ export function ChannelGrid() {
         <h2 id="channels-title">Onde você nos encontra</h2>
       </div>
       <div className="channel-grid__links">
-        {commercialChannels.map((channel) => {
-          const Icon = icons[channel.key];
+        {commercialChannels
+          .filter((channel) => hasLink(channel.key))
+          .map((channel) => {
+            const Icon = icons[channel.key];
 
-          return (
-            <ExternalLink
-              key={channel.key}
-              href={channel.href}
-              showIcon={false}
-              className={`channel-link channel-link--${channel.tone}`}
-              aria-label={`Abrir ${channel.label}`}
-              data-reveal-channel
-            >
-              <Icon className="channel-link__icon" aria-hidden="true" />
-              <span>{channel.label}</span>
-              <span className="channel-link__arrow" aria-hidden="true">
-                →
-              </span>
-            </ExternalLink>
-          );
-        })}
+            return (
+              <ExternalLink
+                key={channel.key}
+                href={channel.href}
+                showIcon={false}
+                className={`channel-link channel-link--${channel.tone}`}
+                aria-label={`Abrir ${channel.label}`}
+                data-reveal-channel
+              >
+                <Icon className="channel-link__icon" aria-hidden="true" />
+                <span>{channel.label}</span>
+                <span className="channel-link__arrow" aria-hidden="true">
+                  →
+                </span>
+              </ExternalLink>
+            );
+          })}
       </div>
     </section>
   );

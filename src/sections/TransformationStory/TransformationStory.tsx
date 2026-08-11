@@ -5,7 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CommercialImage } from '@/components/ui/CommercialImage';
 import { ExternalLink } from '@/components/ui/ExternalLink';
 import { transformationStory } from '@/data/commercial';
-import { links } from '@/data/links';
+import { hasLink, links } from '@/data/links';
 import { prefersReducedMotion } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -61,13 +61,15 @@ export function TransformationStory() {
           Você envia a referência. Nós transformamos os detalhes em uma lembrança criada
           especialmente para você.
         </p>
-        <ExternalLink
-          href={links.whatsapp}
-          showIcon={false}
-          className="commercial-button commercial-button--primary"
-        >
-          Criar meu personalizado <span aria-hidden="true">→</span>
-        </ExternalLink>
+        {hasLink('whatsapp') && (
+          <ExternalLink
+            href={links.whatsapp}
+            showIcon={false}
+            className="commercial-button commercial-button--primary"
+          >
+            Criar meu personalizado <span aria-hidden="true">→</span>
+          </ExternalLink>
+        )}
       </div>
       <div className="transformation-story__visual">
         <div className="transformation-story__source" data-transform-source>

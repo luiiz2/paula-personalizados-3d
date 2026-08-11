@@ -20,7 +20,7 @@ Esta é uma landing page comercial estática construída com:
 - GSAP e `@gsap/react` para animações;
 - Oxlint;
 - Vitest, Testing Library e jsdom;
-- Node.js 22 ou superior e npm 10 ou superior.
+- Node.js ^22.22.2, ^24.15.0 ou >=26.0.0 e npm 10 ou superior.
 
 Use npm. Não troque o gerenciador, a stack ou uma biblioteca sem necessidade comprovada e autorização compatível com o pedido.
 
@@ -50,7 +50,8 @@ Use npm. Não troque o gerenciador, a stack ou uma biblioteca sem necessidade co
 
 - Links globais: `src/data/links.ts`.
 - Produtos e destinos específicos: `src/data/products.ts`.
-- Galeria, categorias, proporções e textos alternativos: `src/data/gallery.ts`.
+- Conteúdo comercial ativo, incluindo categorias: `src/data/commercial.ts`.
+- Galeria legada, proporções e textos alternativos fora da jornada comercial atual: `src/data/gallery.ts`.
 - Ordem das seções: `src/App.tsx`.
 - Seções: `src/sections/`.
 - Componentes reutilizáveis: `src/components/`.

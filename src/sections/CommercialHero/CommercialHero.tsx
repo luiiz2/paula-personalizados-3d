@@ -4,7 +4,7 @@ import { useGSAP } from '@gsap/react';
 import { CommercialImage } from '@/components/ui/CommercialImage';
 import { ExternalLink } from '@/components/ui/ExternalLink';
 import { heroAssets } from '@/data/commercial';
-import { links } from '@/data/links';
+import { hasLink, links } from '@/data/links';
 import { usePointerParallax } from '@/hooks/usePointerParallax';
 import { prefersReducedMotion } from '@/lib/utils';
 
@@ -67,13 +67,15 @@ export function CommercialHero() {
           realmente importa.
         </p>
         <div className="commercial-hero__actions" data-hero-support>
-          <ExternalLink
-            href={links.whatsapp}
-            showIcon={false}
-            className="commercial-button commercial-button--primary"
-          >
-            Quero criar <span aria-hidden="true">→</span>
-          </ExternalLink>
+          {hasLink('whatsapp') && (
+            <ExternalLink
+              href={links.whatsapp}
+              showIcon={false}
+              className="commercial-button commercial-button--primary"
+            >
+              Quero criar <span aria-hidden="true">→</span>
+            </ExternalLink>
+          )}
           <a href="#como-funciona" className="commercial-button commercial-button--ghost">
             Como funciona <span aria-hidden="true">↘</span>
           </a>

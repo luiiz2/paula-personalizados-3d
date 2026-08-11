@@ -28,7 +28,7 @@ Repositório privado: `https://github.com/luiiz2/paula-personalizados-3d`
 
 ## Requisitos
 
-- Node.js 22 ou superior
+- Node.js ^22.22.2, ^24.15.0 ou >=26.0.0
 - npm
 - Git
 

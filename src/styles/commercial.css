@@ -720,21 +720,35 @@
 .channel-link:hover,
 .channel-link:focus-visible {
   color: #fff;
-  filter: saturate(1.08);
   transform: translateY(-0.35rem) scale(1.02);
   box-shadow: 0 1.2rem 2.4rem rgb(52 37 35 / 0.18);
 }
 
 .channel-link--whatsapp {
-  background: #2fbe68;
+  background: #147a43;
+}
+
+.channel-link--whatsapp:hover,
+.channel-link--whatsapp:focus-visible {
+  background: #0f6335;
 }
 
 .channel-link--instagram {
-  background: linear-gradient(105deg, #bd3788, #ef6375);
+  background: linear-gradient(105deg, #8e246a, #b32e55);
+}
+
+.channel-link--instagram:hover,
+.channel-link--instagram:focus-visible {
+  background: linear-gradient(105deg, #741c58, #932443);
 }
 
 .channel-link--shopee {
-  background: #ee5a24;
+  background: #b83f12;
+}
+
+.channel-link--shopee:hover,
+.channel-link--shopee:focus-visible {
+  background: #91300f;
 }
 
 .channel-link--mercado-livre {
@@ -795,13 +809,13 @@
 
 .commercial-button--rose {
   color: #fff;
-  background: #df6685;
+  background: #a83d5f;
 }
 
 .commercial-button--rose:hover,
 .commercial-button--rose:focus-visible {
   color: #fff;
-  background: #ca4f70;
+  background: #8e2f50;
 }
 
 .memory-closing {
