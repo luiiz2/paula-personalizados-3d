@@ -215,8 +215,13 @@ export function CategoryCoverflow() {
         >
           <ChevronLeft aria-hidden="true" />
         </button>
-        <span aria-live="polite">
-          {activeIndex + 1} de {length}
+        <span aria-live="polite" aria-atomic="true">
+          <span className="sr-only">
+            Categoria {activeIndex + 1} de {length}: {commercialCategories[activeIndex].title}
+          </span>
+          <span aria-hidden="true">
+            {activeIndex + 1} de {length}
+          </span>
         </span>
         <button
           type="button"

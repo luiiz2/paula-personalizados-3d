@@ -27,6 +27,7 @@ Use npm. Não troque o gerenciador, a stack ou uma biblioteca sem necessidade co
 ## Modo de trabalho
 
 - Faça a menor mudança correta que atenda ao pedido.
+- Comunique-se e responda sempre em **Português (Brasil)** em todas as interações, relatórios e planos.
 - Preserve comportamento, conteúdo e trabalho existente fora do escopo.
 - Reutilize componentes, dados, tipos, estilos e dependências existentes.
 - Não refatore, renomeie, reorganize ou migre código sem necessidade direta.
