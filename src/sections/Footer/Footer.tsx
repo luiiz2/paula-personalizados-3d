@@ -12,13 +12,7 @@ const footerNav = [
 export function Footer() {
   return (
     <footer className="commercial-footer" role="contentinfo" aria-label="Rodapé">
-      <a
-        href="#hero"
-        className="commercial-footer__brand"
-        aria-label="Paula Personalizados 3D - Início"
-      >
-        Paula Personalizados 3D
-      </a>
+
       <nav aria-label="Navegação do rodapé">
         {footerNav.map((item) => (
           <a key={item.href} href={item.href}>

@@ -16,6 +16,8 @@ const icons: Record<
   mercadoLivre: Store,
 };
 
+
+
 export function ChannelGrid() {
   const sectionRef = useSectionReveal<HTMLElement>('[data-reveal-channel]');
 
@@ -23,36 +25,48 @@ export function ChannelGrid() {
     <section
       ref={sectionRef}
       id="canais"
-      className="channel-grid commercial-section"
+      className="channel-grid commercial-section py-12 px-4 flex justify-center items-center"
       aria-labelledby="channels-title"
     >
-      <div className="channel-grid__heading">
-        <p className="commercial-eyebrow">Escolha seu canal preferido</p>
-        <h2 id="channels-title">Onde você nos encontra</h2>
-      </div>
-      <div className="channel-grid__links">
-        {commercialChannels
-          .filter((channel) => hasLink(channel.key))
-          .map((channel) => {
-            const Icon = icons[channel.key];
+      {/* Novo Card CTA Escuro com Brilho Rosa exatamente como na imagem enviada */}
+      <div className="commercial-cta-card max-w-4xl w-full mx-auto text-center p-8 md:p-14 relative overflow-hidden">
+        <p className="commercial-cta-card__eyebrow">
+          SEU PRÓXIMO PERSONALIZADO COMEÇA AQUI
+        </p>
 
-            return (
-              <ExternalLink
-                key={channel.key}
-                href={channel.href}
-                showIcon={false}
-                className={`channel-link channel-link--${channel.tone}`}
-                aria-label={`Abrir ${channel.label}`}
-                data-reveal-channel
-              >
-                <Icon className="channel-link__icon" aria-hidden="true" />
-                <span>{channel.label}</span>
-                <span className="channel-link__arrow" aria-hidden="true">
-                  →
-                </span>
-              </ExternalLink>
-            );
-          })}
+        <h2 id="channels-title" className="commercial-cta-card__title mt-3" aria-label="Onde você nos encontra. Entre em contato.">
+          <span>Entre em </span>
+          <span className="commercial-cta-card__accent font-italic">contato.</span>
+        </h2>
+
+        <p className="commercial-cta-card__support mt-3">
+          Estamos no WhatsApp, Instagram, Shopee e Mercado Livre.
+        </p>
+
+        <div className="commercial-cta-card__buttons mt-8 flex flex-wrap justify-center items-center gap-4">
+          {commercialChannels
+            .filter((channel) => hasLink(channel.key))
+            .map((channel) => {
+              const Icon = icons[channel.key];
+
+              return (
+                <ExternalLink
+                  key={channel.key}
+                  href={channel.href}
+                  showIcon={false}
+                  className="cta-pill-button"
+                  aria-label={`Abrir ${channel.label}`}
+                  data-reveal-channel
+                >
+                  <Icon className="cta-pill-button__icon" aria-hidden="true" />
+                  <span className="cta-pill-button__label">{channel.label}</span>
+                  <span className="cta-pill-button__arrow" aria-hidden="true">
+                    →
+                  </span>
+                </ExternalLink>
+              );
+            })}
+        </div>
       </div>
     </section>
   );

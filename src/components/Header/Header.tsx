@@ -102,36 +102,20 @@ export function Header() {
         role="banner"
       >
         <nav
-          className="container-prose flex items-center justify-between h-18 md:h-20"
+          className="container-prose flex items-center justify-between h-20 md:h-24"
           aria-label="Navegação principal"
         >
           {/* Logo */}
           <a
             href="#hero"
-            className="flex items-center gap-2 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-lg"
+            className="flex items-center gap-3 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-xl group"
             aria-label="Paula Personalizados 3D - Início"
           >
-            <svg
-              className={cn('h-8 w-8 transition-colors', scrolled ? 'text-ink' : 'text-pink')}
-              viewBox="0 0 32 32"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M16 2 C8 2 2 8 2 16 c0 5 3 9 7 13 4 4 9 7 14 7 5 0 10-3 14-7 4-4 7-8 7-13 C30 8 24 2 16 2 Z"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                fill="none"
-              />
-              <path d="M16 10 Q12 6 10 10 Q8 14 12 16 Q10 18 16 22 Q22 18 20 16 Q24 14 22 10 Q20 6 16 10" stroke="currentColor" strokeWidth="1.5" fill="none" />
-              <circle cx="16" cy="16" r="3" fill="currentColor" />
-            </svg>
-            <span className={cn(
-              'font-editorial font-black text-xl md:text-2xl tracking-tight hidden sm:block transition-colors',
-              scrolled ? 'text-ink' : 'text-ink/90',
-            )}>
-              Paula Personalizados 3D
-            </span>
+            <img
+              src="/assets/logo-paula-personalizados-3d.png"
+              alt="Logo Paula Personalizados 3D"
+              className="h-16 md:h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
           </a>
 
           {/* Desktop Menu */}

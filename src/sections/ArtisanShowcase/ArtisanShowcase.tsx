@@ -3,6 +3,7 @@ import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CommercialImage } from '@/components/ui/CommercialImage';
+import { LiquidEther } from '@/components/ui/LiquidEther';
 import { artisanShowcaseAssets, trustMessages } from '@/data/commercial';
 import { shouldPinEditorialPanel } from '@/lib/motion';
 import { prefersReducedMotion } from '@/lib/utils';
@@ -35,10 +36,10 @@ export function ArtisanShowcase() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: 'top top',
-              end: '+=90%',
+              end: '+=25%',
               pin: '[data-artisan-stage]',
               pinSpacing: true,
-              scrub: 0.8,
+              scrub: 0.3,
             },
           });
 
@@ -79,10 +80,25 @@ export function ArtisanShowcase() {
     <section
       ref={sectionRef}
       id="feito-a-mao"
-      className="artisan-showcase editorial-panel editorial-panel--ink"
+      className="artisan-showcase editorial-panel editorial-panel--ink relative overflow-hidden"
       aria-labelledby="artisan-title"
     >
-      <div className="artisan-showcase__stage" data-artisan-stage>
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+        <LiquidEther
+          mouseForce={20}
+          cursorSize={100}
+          isViscous={false}
+          viscous={30}
+          colors={['#b100f6', '#ff00b2', '#f900e7']}
+          autoDemo
+          autoSpeed={0.1}
+          autoIntensity={2.5}
+          isBounce={false}
+          resolution={0.75}
+        />
+      </div>
+
+      <div className="artisan-showcase__stage relative z-10" data-artisan-stage>
         <div
           className="artisan-showcase__products"
           aria-label="Exemplos de peças personalizadas"

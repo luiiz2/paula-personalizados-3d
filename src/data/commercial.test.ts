@@ -36,7 +36,7 @@ describe('commercial landing data', () => {
   });
 
   it('keeps the official logo and two showcase assets explicit', () => {
-    expect(brandAsset.src).toBe('/assets/photo_2026-08-09_20-14-06.jpg');
+    expect(brandAsset.src).toBe('/assets/logo-paula-personalizados-3d.png');
     expect(artisanShowcaseAssets.primary.alt).toMatch(/personagem feminina/i);
     expect(artisanShowcaseAssets.secondary.alt).toMatch(/pai e filho/i);
   });

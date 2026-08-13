@@ -1,4 +1,3 @@
-import { Header } from '@/components/Header/Header';
 import { SmoothScroll } from '@/components/motion/SmoothScroll';
 import { CommercialHero } from '@/sections/CommercialHero/CommercialHero';
 import { TrustMarquee } from '@/sections/CommercialHero/TrustMarquee';
@@ -16,7 +15,6 @@ function App() {
         <a href="#main-content" className="skip-link">
           Ir para o conteúdo principal
         </a>
-        <Header />
         <main id="main-content" tabIndex={-1}>
           <CommercialHero />
           <TrustMarquee />

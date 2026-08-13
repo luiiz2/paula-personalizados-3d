@@ -28,39 +28,39 @@ export const trustMessages = [
 ] as const;
 
 export const brandAsset: CommercialImageAsset = {
-  src: '/assets/photo_2026-08-09_20-14-06.jpg',
+  src: '/assets/logo-paula-personalizados-3d.png',
   alt: 'Logo Paula Personalizados 3D',
   objectPosition: '50% 50%',
 };
 
 export const artisanShowcaseAssets = {
   primary: {
-    src: '/assets/photo_2026-07-23_10-07-08.jpg',
-    alt: 'Personagem feminina personalizada com vestido elegante',
-    objectPosition: '50% 44%',
+    src: '/assets/woman-magenta-dress-3d.png',
+    alt: 'Personagem feminina personalizada com vestido elegante em 3D',
+    objectPosition: '50% 50%',
   },
   secondary: {
-    src: '/assets/photo_2026-08-09_20-15-54.jpg',
-    alt: 'Pai e filho representados em uma lembrança personalizada',
-    objectPosition: '50% 58%',
+    src: '/assets/father-son-3d.png',
+    alt: 'Pai e filho representados em uma lembrança personalizada em 3D',
+    objectPosition: '50% 50%',
   },
 } satisfies Record<'primary' | 'secondary', CommercialImageAsset>;
 
 export const heroAssets: CommercialImageAsset[] = [
   {
-    src: '/assets/photo_2026-07-20_12-15-36.jpg',
-    alt: 'Miniatura 3D personalizada de uma mulher com óculos',
+    src: '/assets/spiderman-3d.png',
+    alt: 'Miniatura 3D estilo colecionável',
     objectPosition: '50% 50%',
   },
   {
-    src: '/assets/photo_2026-07-23_10-07-08.jpg',
-    alt: 'Personagem feminina personalizada com vestido elegante',
-    objectPosition: '50% 44%',
+    src: '/assets/woman-magenta-dress-3d.png',
+    alt: 'Personagem feminina personalizada com vestido elegante 3D',
+    objectPosition: '50% 50%',
   },
   {
-    src: '/assets/photo_2026-08-09_20-15-54.jpg',
-    alt: 'Pai e filho representados em uma lembrança personalizada',
-    objectPosition: '50% 58%',
+    src: '/assets/father-son-3d.png',
+    alt: 'Pai e filho representados em 3D',
+    objectPosition: '50% 50%',
   },
 ];
 
@@ -82,7 +82,7 @@ export const commercialCategories: CommercialCategory[] = [
     id: 'foto-3d',
     title: 'Miniaturas da sua foto',
     image: {
-      src: '/assets/photo_2026-08-09_20-13-26.jpg',
+      src: '/assets/woman-holding-figure-3d.png',
       alt: 'Foto de referência ao lado de uma miniatura 3D personalizada',
       objectPosition: '50% 50%',
     },
@@ -91,32 +91,32 @@ export const commercialCategories: CommercialCategory[] = [
     id: 'desenho-3d',
     title: 'Do desenho para a vida em 3D',
     image: {
-      src: '/assets/photo_2026-08-09_20-13-47.jpg',
-      alt: 'Desenho infantil e peça personalizada inspirada nele',
-      objectPosition: '30% 50%',
+      src: '/assets/chaves-3d.png',
+      alt: 'Peça personalizada inspirada em personagem 3D',
+      objectPosition: '50% 50%',
     },
     revealImage: {
-      src: '/assets/photo_2026-08-09_20-13-42.jpg',
-      alt: 'Criança segurando uma peça personalizada inspirada em seu desenho',
-      objectPosition: '72% 50%',
+      src: '/assets/spiderman-3d.png',
+      alt: 'Peça personalizada estilo colecionável',
+      objectPosition: '50% 50%',
     },
   },
   {
     id: 'bonecos',
     title: 'Bonecos personalizados',
     image: {
-      src: '/assets/photo_2026-08-09_20-13-33.jpg',
-      alt: 'Boneco personalizado em estilo colecionável',
-      objectPosition: '50% 48%',
+      src: '/assets/spiderman-3d.png',
+      alt: 'Boneco personalizado em estilo colecionável 3D',
+      objectPosition: '50% 50%',
     },
   },
   {
     id: 'lembrancas',
-    title: 'Lembranças especiais',
+    title: 'Lembrancas especiais',
     image: {
-      src: '/assets/photo_2026-08-09_20-15-54.jpg',
-      alt: 'Lembrança personalizada de pai e filho',
-      objectPosition: '50% 58%',
+      src: '/assets/father-son-3d.png',
+      alt: 'Lembrança personalizada de pai e filho em 3D',
+      objectPosition: '50% 50%',
     },
   },
 ];
@@ -134,7 +134,7 @@ export const commercialChannels: CommercialChannel[] = [
 ];
 
 export const closingAsset: CommercialImageAsset = {
-  src: '/assets/photo_2026-08-09_20-15-54.jpg',
+  src: '/assets/woman-holding-figure-3d.png',
   alt: 'Presente personalizado feito para guardar uma memória especial',
-  objectPosition: '50% 58%',
+  objectPosition: '50% 50%',
 };

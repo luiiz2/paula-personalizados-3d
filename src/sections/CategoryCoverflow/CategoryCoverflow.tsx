@@ -8,11 +8,16 @@ import {
   type PointerEvent,
 } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import { CommercialImage } from '@/components/ui/CommercialImage';
 import { commercialCategories } from '@/data/commercial';
-import { useSectionReveal } from '@/hooks/useSectionReveal';
+import { prefersReducedMotion } from '@/lib/utils';
 
-// oxlint-disable-next-line react/only-export-components -- Public helper required by the coverflow contract.
+gsap.registerPlugin(ScrollTrigger);
+
+// oxlint-disable-next-line react/only-export-components -- Helper mantido para contrato público e testes
 export function circularOffset(index: number, activeIndex: number, length: number): number {
   let offset = index - activeIndex;
   if (offset > length / 2) offset -= length;
@@ -23,7 +28,10 @@ export function circularOffset(index: number, activeIndex: number, length: numbe
 const bentoSizes = ['feature', 'wide', 'standard', 'standard'] as const;
 
 export function CategoryCoverflow() {
-  const sectionRef = useSectionReveal<HTMLElement>('[data-reveal-card]');
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [revealResult, setRevealResult] = useState(false);
   const pointerStart = useRef<number | null>(null);
@@ -44,6 +52,70 @@ export function CategoryCoverflow() {
     setActiveIndex((index + length) % length);
     setRevealResult(false);
   };
+
+  useGSAP(
+    () => {
+      if (prefersReducedMotion() || !sectionRef.current || !trackRef.current) return;
+
+      const media = gsap.matchMedia();
+
+      media.add('(min-width: 960px)', () => {
+        const track = trackRef.current;
+        const heading = headingRef.current;
+        if (!track) return;
+
+        const getScrollAmount = () => -(track.scrollWidth - window.innerWidth + 120);
+
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 4%',
+            end: '+=300%',
+            pin: true,
+            scrub: 0.8,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const progress = self.progress;
+              const newIndex = Math.min(
+                length - 1,
+                Math.max(0, Math.floor(progress * length)),
+              );
+              setActiveIndex(newIndex);
+            },
+          },
+        });
+
+        // 1. Suave deslocamento e esmaecimento do cabeçalho para liberar espaço da tela
+        if (heading) {
+          timeline.to(heading, { y: -30, opacity: 0.35, ease: 'none' }, 0);
+        }
+
+        // 2. Movimento horizontal principal da direita para a esquerda
+        timeline.to(track, {
+          x: getScrollAmount,
+          ease: 'none',
+        }, 0);
+
+        // 3. Animação secundária de entrada para os produtos conforme surgem no viewport
+        const cards = track.querySelectorAll('[data-reveal-card]');
+        cards.forEach((card, i) => {
+          timeline.fromTo(
+            card,
+            { opacity: 0.6, x: 80, scale: 0.95 },
+            { opacity: 1, x: 0, scale: 1, ease: 'power2.out' },
+            (i / (length - 1)) * 0.7,
+          );
+        });
+
+        return () => {
+          timeline.kill();
+        };
+      });
+
+      return () => media.revert();
+    },
+    { scope: sectionRef },
+  );
 
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (event.key === 'ArrowRight') {
@@ -116,12 +188,13 @@ export function CategoryCoverflow() {
       className="category-coverflow commercial-section"
       aria-labelledby="categories-title"
     >
-      <div className="category-coverflow__heading">
+      <div className="category-coverflow__heading" ref={headingRef}>
         <p className="commercial-eyebrow">Escolha por onde começar</p>
         <h2 id="categories-title">Nossas categorias</h2>
       </div>
 
       <div
+        ref={trackRef}
         className="category-coverflow__viewport"
         role="region"
         aria-roledescription="carrossel"
@@ -160,6 +233,10 @@ export function CategoryCoverflow() {
               data-revealed={active && revealResult}
             >
               <div className="category-coverflow__reveal-frame" data-reveal-card>
+                <span className="category-coverflow__number" aria-hidden="true">
+                  0{index + 1}
+                </span>
+
                 <button
                   type="button"
                   className="category-coverflow__slide"
@@ -170,13 +247,13 @@ export function CategoryCoverflow() {
                 >
                   <CommercialImage
                     asset={category.image}
-                    sizes="(max-width: 767px) 72vw, 24vw"
+                    sizes="(max-width: 767px) 72vw, 32vw"
                     decorative={active && revealResult}
                   />
                   {category.revealImage ? (
                     <CommercialImage
                       asset={category.revealImage}
-                      sizes="(max-width: 767px) 72vw, 24vw"
+                      sizes="(max-width: 767px) 72vw, 32vw"
                       className="category-coverflow__reveal"
                       decorative={!active || !revealResult}
                     />
