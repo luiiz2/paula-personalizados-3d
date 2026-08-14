@@ -8,14 +8,8 @@ import {
   type PointerEvent,
 } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
 import { CommercialImage } from '@/components/ui/CommercialImage';
 import { commercialCategories } from '@/data/commercial';
-import { prefersReducedMotion } from '@/lib/utils';
-
-gsap.registerPlugin(ScrollTrigger);
 
 // oxlint-disable-next-line react/only-export-components -- Helper mantido para contrato público e testes
 export function circularOffset(index: number, activeIndex: number, length: number): number {
@@ -30,11 +24,11 @@ const bentoSizes = ['feature', 'wide', 'standard', 'standard'] as const;
 export function CategoryCoverflow() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [revealResult, setRevealResult] = useState(false);
   const pointerStart = useRef<number | null>(null);
+  const pointerScrollStart = useRef(0);
   const pointerDragged = useRef(false);
   const pointerDraggedReset = useRef<ReturnType<typeof setTimeout> | null>(null);
   const length = commercialCategories.length;
@@ -52,70 +46,6 @@ export function CategoryCoverflow() {
     setActiveIndex((index + length) % length);
     setRevealResult(false);
   };
-
-  useGSAP(
-    () => {
-      if (prefersReducedMotion() || !sectionRef.current || !trackRef.current) return;
-
-      const media = gsap.matchMedia();
-
-      media.add('(min-width: 960px)', () => {
-        const track = trackRef.current;
-        const heading = headingRef.current;
-        if (!track) return;
-
-        const getScrollAmount = () => -(track.scrollWidth - window.innerWidth + 120);
-
-        const timeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 4%',
-            end: '+=300%',
-            pin: true,
-            scrub: 0.8,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              const progress = self.progress;
-              const newIndex = Math.min(
-                length - 1,
-                Math.max(0, Math.floor(progress * length)),
-              );
-              setActiveIndex(newIndex);
-            },
-          },
-        });
-
-        // 1. Suave deslocamento e esmaecimento do cabeçalho para liberar espaço da tela
-        if (heading) {
-          timeline.to(heading, { y: -30, opacity: 0.35, ease: 'none' }, 0);
-        }
-
-        // 2. Movimento horizontal principal da direita para a esquerda
-        timeline.to(track, {
-          x: getScrollAmount,
-          ease: 'none',
-        }, 0);
-
-        // 3. Animação secundária de entrada para os produtos conforme surgem no viewport
-        const cards = track.querySelectorAll('[data-reveal-card]');
-        cards.forEach((card, i) => {
-          timeline.fromTo(
-            card,
-            { opacity: 0.6, x: 80, scale: 0.95 },
-            { opacity: 1, x: 0, scale: 1, ease: 'power2.out' },
-            (i / (length - 1)) * 0.7,
-          );
-        });
-
-        return () => {
-          timeline.kill();
-        };
-      });
-
-      return () => media.revert();
-    },
-    { scope: sectionRef },
-  );
 
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (event.key === 'ArrowRight') {
@@ -135,15 +65,32 @@ export function CategoryCoverflow() {
       pointerDraggedReset.current = null;
     }
     pointerStart.current = event.clientX;
+    pointerScrollStart.current = event.currentTarget.scrollLeft;
     pointerDragged.current = false;
     event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
+
+  const onPointerMove = (event: PointerEvent<HTMLElement>) => {
+    if (pointerStart.current === null) return;
+    const distance = event.clientX - pointerStart.current;
+    if (Math.abs(distance) < 4) return;
+    pointerDragged.current = true;
+    event.currentTarget.scrollLeft = pointerScrollStart.current - distance;
   };
 
   const onPointerUp = (event: PointerEvent<HTMLElement>) => {
     if (pointerStart.current === null) return;
 
+    const scrolled =
+      Math.abs(event.currentTarget.scrollLeft - pointerScrollStart.current) > 1;
     const distance = event.clientX - pointerStart.current;
     pointerStart.current = null;
+
+    if (scrolled) {
+      pointerDragged.current = false;
+      return;
+    }
+
     if (Math.abs(distance) < 42) return;
 
     pointerDragged.current = true;
@@ -188,7 +135,7 @@ export function CategoryCoverflow() {
       className="category-coverflow commercial-section"
       aria-labelledby="categories-title"
     >
-      <div className="category-coverflow__heading" ref={headingRef}>
+      <div className="category-coverflow__heading">
         <p className="commercial-eyebrow">Escolha por onde começar</p>
         <h2 id="categories-title">Nossas categorias</h2>
       </div>
@@ -202,6 +149,7 @@ export function CategoryCoverflow() {
         tabIndex={0}
         onKeyDown={onKeyDown}
         onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerCancel}
       >
@@ -297,7 +245,7 @@ export function CategoryCoverflow() {
             Categoria {activeIndex + 1} de {length}: {commercialCategories[activeIndex].title}
           </span>
           <span aria-hidden="true">
-            {activeIndex + 1} de {length}
+            {activeIndex + 1}
           </span>
         </span>
         <button

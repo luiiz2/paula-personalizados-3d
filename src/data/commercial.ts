@@ -28,19 +28,19 @@ export const trustMessages = [
 ] as const;
 
 export const brandAsset: CommercialImageAsset = {
-  src: '/assets/logo-paula-personalizados-3d.png',
+  src: '/assets/logo-paula-personalizados-3d.webp',
   alt: 'Logo Paula Personalizados 3D',
   objectPosition: '50% 50%',
 };
 
 export const artisanShowcaseAssets = {
   primary: {
-    src: '/assets/woman-magenta-dress-3d.png',
+    src: '/assets/woman-magenta-dress-3d.webp',
     alt: 'Personagem feminina personalizada com vestido elegante em 3D',
     objectPosition: '50% 50%',
   },
   secondary: {
-    src: '/assets/father-son-3d.png',
+    src: '/assets/father-son-3d.webp',
     alt: 'Pai e filho representados em uma lembrança personalizada em 3D',
     objectPosition: '50% 50%',
   },
@@ -48,17 +48,17 @@ export const artisanShowcaseAssets = {
 
 export const heroAssets: CommercialImageAsset[] = [
   {
-    src: '/assets/spiderman-3d.png',
+    src: '/assets/spiderman-3d.webp',
     alt: 'Miniatura 3D estilo colecionável',
     objectPosition: '50% 50%',
   },
   {
-    src: '/assets/woman-magenta-dress-3d.png',
+    src: '/assets/woman-magenta-dress-3d.webp',
     alt: 'Personagem feminina personalizada com vestido elegante 3D',
     objectPosition: '50% 50%',
   },
   {
-    src: '/assets/father-son-3d.png',
+    src: '/assets/father-son-3d.webp',
     alt: 'Pai e filho representados em 3D',
     objectPosition: '50% 50%',
   },
@@ -82,7 +82,7 @@ export const commercialCategories: CommercialCategory[] = [
     id: 'foto-3d',
     title: 'Miniaturas da sua foto',
     image: {
-      src: '/assets/woman-holding-figure-3d.png',
+      src: '/assets/woman-holding-figure-3d.webp',
       alt: 'Foto de referência ao lado de uma miniatura 3D personalizada',
       objectPosition: '50% 50%',
     },
@@ -91,12 +91,12 @@ export const commercialCategories: CommercialCategory[] = [
     id: 'desenho-3d',
     title: 'Do desenho para a vida em 3D',
     image: {
-      src: '/assets/chaves-3d.png',
+      src: '/assets/chaves-3d.webp',
       alt: 'Peça personalizada inspirada em personagem 3D',
       objectPosition: '50% 50%',
     },
     revealImage: {
-      src: '/assets/spiderman-3d.png',
+      src: '/assets/spiderman-3d.webp',
       alt: 'Peça personalizada estilo colecionável',
       objectPosition: '50% 50%',
     },
@@ -105,7 +105,7 @@ export const commercialCategories: CommercialCategory[] = [
     id: 'bonecos',
     title: 'Bonecos personalizados',
     image: {
-      src: '/assets/spiderman-3d.png',
+      src: '/assets/spiderman-3d.webp',
       alt: 'Boneco personalizado em estilo colecionável 3D',
       objectPosition: '50% 50%',
     },
@@ -114,7 +114,7 @@ export const commercialCategories: CommercialCategory[] = [
     id: 'lembrancas',
     title: 'Lembrancas especiais',
     image: {
-      src: '/assets/father-son-3d.png',
+      src: '/assets/father-son-3d.webp',
       alt: 'Lembrança personalizada de pai e filho em 3D',
       objectPosition: '50% 50%',
     },
@@ -134,7 +134,7 @@ export const commercialChannels: CommercialChannel[] = [
 ];
 
 export const closingAsset: CommercialImageAsset = {
-  src: '/assets/woman-holding-figure-3d.png',
+  src: '/assets/woman-holding-figure-3d.webp',
   alt: 'Presente personalizado feito para guardar uma memória especial',
   objectPosition: '50% 50%',
 };

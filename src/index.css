@@ -18,7 +18,6 @@
 
   /* Fonts */
   --font-sans: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   --font-editorial: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-script: 'Pacifico', 'Caveat', cursive;
   --font-script-soft: 'Caveat', 'Pacifico', cursive;
@@ -106,136 +105,7 @@ img {
    Utility components
    ============================================================ */
 
-/* Editorial giant headline */
-.font-editorial {
-  font-family: var(--font-editorial);
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  line-height: 0.92;
-}
-
-.font-script {
-  font-family: var(--font-script);
-  font-weight: 400;
-}
-
-.font-script-soft {
-  font-family: var(--font-script-soft);
-}
-
 /* Fluid editorial (PRD §93) */
-.display-hero {
-  font-family: var(--font-editorial);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 0.88;
-  font-size: clamp(3.5rem, 13vw, 11rem);
-}
-
-.hero-display {
-  font-family: var(--font-editorial);
-  font-size: clamp(2.25rem, 10vw, 5rem);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 0.88;
-}
-
-@media (min-width: 48rem) {
-  .hero-display {
-    font-size: clamp(2.75rem, 5.5vw, 5rem);
-  }
-}
-
-.display-section {
-  font-family: var(--font-editorial);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 0.9;
-  font-size: clamp(2.75rem, 9vw, 7rem);
-}
-
-.display-script {
-  font-family: var(--font-script);
-  font-weight: 400;
-  font-size: clamp(2rem, 6vw, 4.5rem);
-  line-height: 1;
-}
-
-/* Section wrapper */
-.section {
-  padding-block: clamp(4.5rem, 11vw, 9rem);
-  position: relative;
-}
-
-.container-prose {
-  width: 100%;
-  max-width: calc(var(--container-prose) + 4rem);
-  margin-inline: auto;
-  padding-inline: clamp(1.25rem, 5vw, 3rem);
-}
-
-/* Editorial uppercase eyebrow */
-.eyebrow {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 0.72rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--color-mute);
-}
-
-/* Marquee */
-@keyframes marquee-x {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-.animate-marquee {
-  animation: marquee-x 38s linear infinite;
-  will-change: transform;
-}
-
-/* Floating */
-@keyframes float-y {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(var(--float-rotation, 0deg));
-  }
-  50% {
-    transform: translate3d(0, calc(-1 * var(--float-distance, 14px)), 0)
-      rotate(var(--float-rotation, 0deg));
-  }
-}
-
-.animate-float {
-  animation: float-y 7s var(--ease-soft) infinite;
-}
-
-.animate-float-slow {
-  animation: float-y 11s var(--ease-soft) infinite;
-}
-
-/* Wing flap for butterfly */
-@keyframes wing-flap {
-  0%,
-  100% {
-    transform: scaleX(1);
-  }
-  50% {
-    transform: scaleX(0.78);
-  }
-}
-
-.animate-wing {
-  transform-origin: center;
-  animation: wing-flap 3.4s var(--ease-soft) infinite;
-}
-
-/* Underline animated (PRD §105) */
 .link-underline {
   position: relative;
 }
@@ -277,12 +147,6 @@ img {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  .animate-float,
-  .animate-float-slow,
-  .animate-marquee,
-  .animate-wing {
-    animation: none !important;
-  }
 }
 
 /* ============================================================
@@ -305,10 +169,3 @@ img {
 }
 
 /* Hide scrollbar for horizontal swipe rails */
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
