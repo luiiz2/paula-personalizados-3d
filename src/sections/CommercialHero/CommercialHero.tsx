@@ -87,7 +87,7 @@ export function CommercialHero() {
           aria-label="Logo Paula Personalizados 3D — Clique para ver efeito 3D"
         >
           <img
-            src="/assets/logo-paula-personalizados-3d.png"
+            src="/assets/logo-paula-personalizados-3d.webp"
             alt=""
             role="presentation"
             aria-hidden="true"

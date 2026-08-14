@@ -44,11 +44,3 @@ export function lockBodyScroll(lock: boolean): void {
   if (typeof document === 'undefined') return;
   document.body.style.overflow = lock ? 'hidden' : '';
 }
-
-/**
- * Abre link externo com segurança (PRD §76)
- */
-export function openExternal(url: string): void {
-  if (!url) return;
-  window.open(url, '_blank', 'noopener,noreferrer');
-}

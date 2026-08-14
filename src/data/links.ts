@@ -18,14 +18,6 @@ export const links = {
 export type LinkKey = keyof typeof links;
 
 /**
- * Helper para abrir links externos com segurança (PRD §76)
- */
-export function openExternal(url: string): void {
-  if (!url) return;
-  window.open(url, '_blank', 'noopener,noreferrer');
-}
-
-/**
  * Verifica se link está configurado
  */
 export function hasLink(key: LinkKey): boolean {

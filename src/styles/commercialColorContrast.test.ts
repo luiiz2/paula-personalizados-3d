@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 
 const stylesheet = readFileSync(resolve('src/styles/commercial.css'), 'utf8');
 
-const WHITE = '#ffffff';
 const INK_PANEL = '#111111';
 
 function relativeLuminance(hex: string) {
@@ -45,28 +44,6 @@ function colorsFor(selector: string) {
 }
 
 describe('commercial CTA contrast', () => {
-  it.each([
-    '.channel-link--whatsapp',
-    '.channel-link--whatsapp:hover',
-    '.channel-link--whatsapp:focus-visible',
-    '.channel-link--instagram',
-    '.channel-link--instagram:hover',
-    '.channel-link--instagram:focus-visible',
-    '.channel-link--shopee',
-    '.channel-link--shopee:hover',
-    '.channel-link--shopee:focus-visible',
-    '.commercial-button--rose',
-    '.commercial-button--rose:hover',
-    '.commercial-button--rose:focus-visible',
-  ])('%s keeps white text at WCAG AA contrast across every surface color', (selector) => {
-    const surfaceColors = colorsFor(selector);
-
-    expect(surfaceColors.length).toBeGreaterThan(0);
-    surfaceColors.forEach((surface) => {
-      expect(contrastRatio(WHITE, surface), `${selector} on ${surface}`).toBeGreaterThanOrEqual(4.5);
-    });
-  });
-
   it.each([
     '.commercial-footer__channel',
     '.commercial-footer a:hover',
