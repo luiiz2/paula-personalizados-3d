@@ -102,7 +102,7 @@ export function CommercialHero() {
         aria-label="Navegação do topo"
         data-hero-support
       >
-        <a href="#hero" className="hero-nav-link hero-nav-link--active">
+        <a href="#hero" className="hero-nav-link">
           Início
         </a>
         <span className="hero-nav-divider" aria-hidden="true">|</span>
