@@ -57,7 +57,7 @@
 
 .commercial-eyebrow {
   margin: 0 0 0.8rem;
-  color: #9f6472;
+  color: #8d5161;
   font: 800 0.72rem/1 var(--font-sans);
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -173,6 +173,7 @@
 
 .commercial-hero__accent {
   color: var(--color-pink);
+  font-style: italic;
 }
 
 .commercial-hero__visual {
@@ -279,7 +280,7 @@
   border-block: 1px solid rgb(202 79 112 / 0.16);
   background: rgb(255 255 255 / 0.18);
   backdrop-filter: blur(0.75rem);
-  padding-block: 0.95rem;
+  padding-block: 1.05rem;
 }
 
 .editorial-panel {
@@ -475,6 +476,8 @@
 
 .trust-marquee__motion {
   will-change: transform;
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
 
 .trust-marquee__copy {
@@ -678,10 +681,15 @@
 
 .transformation-story__arrow {
   display: grid;
-  min-width: 1.5rem;
+  width: clamp(2.25rem, 4vw, 3rem);
+  aspect-ratio: 1;
   place-items: center;
+  border-radius: 999px;
   color: #a83d5f;
-  font: 700 clamp(1.4rem, 2.6vw, 2.7rem) / 1 var(--font-sans);
+  background: rgb(255 255 255 / 0.55);
+  border: 1px solid rgb(168 61 95 / 0.2);
+  box-shadow: 0 0.5rem 1.25rem rgb(168 61 95 / 0.12);
+  font: 700 clamp(1.1rem, 1.8vw, 1.5rem) / 1 var(--font-sans);
 }
 
 .transformation-story__arrow-symbol {
@@ -752,7 +760,8 @@
 
 .category-coverflow__heading h2 {
   margin: 0.55rem 0 0;
-  font: 900 clamp(3rem, 6vw, 6rem) / 0.9 var(--font-display);
+  font: 900 clamp(3rem, 6vw, 6rem) / 0.9 var(--font-editorial);
+  letter-spacing: -0.03em;
   text-transform: uppercase;
 }
 
@@ -835,7 +844,8 @@
   padding: 4rem 1.25rem 1.25rem;
   color: #fff;
   background: linear-gradient(transparent, rgb(25 18 19 / 0.78));
-  font: 800 1.05rem/1.05 var(--font-display);
+  font: 800 1.05rem/1.05 var(--font-sans);
+  letter-spacing: 0.02em;
   text-align: left;
   text-transform: uppercase;
 }
@@ -945,6 +955,12 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: border-color 0.3s var(--ease-soft), box-shadow 0.3s var(--ease-soft);
+  }
+
+  .category-coverflow__slide-shell:hover {
+    border-color: rgb(204 82 112 / 0.5);
+    box-shadow: 0 20px 48px rgb(204 82 112 / 0.2);
   }
 
   /* Pequeno ajuste equilibrado para manter o ritmo sem cortar imagens na parte inferior */
@@ -1075,25 +1091,26 @@
 }
 
 .commercial-footer {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1.2fr;
-  gap: 2rem;
-  align-items: start;
-  padding: 3rem clamp(1.25rem, 5vw, 4.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 3.5rem clamp(1.25rem, 5vw, 4.5rem);
   border-top: 1px solid rgb(255 248 244 / 0.12);
   color: rgb(255 248 244 / 0.72);
   background: #111;
+  text-align: center;
 }
 
 .commercial-footer nav,
 .commercial-footer__channels {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem 1rem;
+  justify-content: center;
+  gap: 0.65rem 1.4rem;
 }
 
 .commercial-footer p {
-  grid-column: 1 / -1;
   margin: 0;
   font-size: 0.8rem;
 }
@@ -1119,16 +1136,6 @@
   border-radius: 4px;
 }
 
-@media (max-width: 48rem) {
-  .commercial-footer {
-    grid-template-columns: 1fr;
-  }
-
-  .commercial-footer p {
-    grid-column: auto;
-  }
-}
-
 /* ============================================================
    Topographic Hero, 3D Spinning Logo & Channel Pills
    ============================================================ */
@@ -1140,7 +1147,7 @@
   justify-content: center;
   text-align: center;
   min-height: auto;
-  padding-block: 2rem 2rem;
+  padding-block: clamp(2.5rem, 6vw, 4rem) clamp(3rem, 7vw, 5rem);
   background-color: #faf5f3;
   background-image:
     radial-gradient(circle at 50% 35%, rgb(244 212 216 / 0.6), transparent 60%),
@@ -1165,6 +1172,15 @@
     0 24px 60px rgb(0 0 0 / 0.8),
     inset 0 0 2px rgb(255 255 255 / 0.25);
   transition: transform 0.3s var(--ease-soft), box-shadow 0.3s var(--ease-soft);
+}
+
+.commercial-cta-card:hover {
+  transform: translateY(-0.25rem);
+  box-shadow:
+    0 0 85px rgb(239 130 158 / 0.45),
+    0 0 140px rgb(204 82 112 / 0.28),
+    0 30px 70px rgb(0 0 0 / 0.85),
+    inset 0 0 2px rgb(255 255 255 / 0.3);
 }
 
 .commercial-cta-card::before {
@@ -1193,6 +1209,7 @@
 .commercial-cta-card__title {
   color: #ffffff;
   font: 400 clamp(2.4rem, 5vw, 4.2rem) / 1.1 var(--font-editorial);
+  letter-spacing: -0.02em;
 }
 
 .commercial-cta-card__accent {
@@ -1299,6 +1316,10 @@
 .logo-3d-disc:hover {
   transform: scale(1.05) rotateY(6deg) rotateX(-4deg);
   box-shadow: none;
+}
+
+.logo-3d-disc:hover img {
+  filter: drop-shadow(0 20px 42px rgb(204 82 112 / 0.48));
 }
 
 .logo-3d-disc img {
