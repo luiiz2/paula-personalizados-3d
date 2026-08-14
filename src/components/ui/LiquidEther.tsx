@@ -40,10 +40,18 @@ export function LiquidEther({
     if (prefersReducedMotion()) return;
 
     // Safely verify WebGL context availability (e.g. in jsdom test environments or headless browsers)
+    if (
+      typeof window === 'undefined' ||
+      navigator.userAgent.includes('jsdom') ||
+      import.meta.env.MODE === 'test' ||
+      (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test')
+    ) {
+      return;
+    }
     try {
       const testCanvas = document.createElement('canvas');
       const glContext = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
-      if (!glContext) return;
+      if (!glContext || typeof (glContext as WebGLRenderingContext).getExtension !== 'function') return;
     } catch {
       return;
     }
@@ -93,6 +101,7 @@ export function LiquidEther({
         uniform vec3 uColor3;
         uniform float uAutoSpeed;
         uniform float uAutoIntensity;
+        uniform float uMouseForce;
         uniform float uAlpha;
         varying vec2 vUv;
 
