@@ -157,7 +157,7 @@ export function CommercialHero() {
           </ExternalLink>
         )}
 
-        <a href="#sobre" className="channel-pill">
+        <a href="#canais" className="channel-pill">
           <Mail className="channel-pill__icon" />
           <span>Contato</span>
         </a>

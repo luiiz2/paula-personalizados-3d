@@ -22,8 +22,8 @@ function App() {
           <TransformationStory />
           <CategoryCoverflow />
           <div className="commercial-closing-chapter">
-            <ChannelGrid />
             <MemoryClosing />
+            <ChannelGrid />
           </div>
         </main>
         <Footer />

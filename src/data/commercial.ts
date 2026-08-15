@@ -112,7 +112,7 @@ export const commercialCategories: CommercialCategory[] = [
   },
   {
     id: 'lembrancas',
-    title: 'Lembrancas especiais',
+    title: 'Lembranças especiais',
     image: {
       src: '/assets/father-son-3d.webp',
       alt: 'Lembrança personalizada de pai e filho em 3D',
