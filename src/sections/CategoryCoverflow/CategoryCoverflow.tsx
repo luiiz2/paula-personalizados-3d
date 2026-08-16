@@ -7,8 +7,14 @@ import {
   type MouseEvent,
   type PointerEvent,
 } from 'react';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CommercialImage } from '@/components/ui/CommercialImage';
 import { commercialCategories } from '@/data/commercial';
+import { prefersReducedMotion } from '@/lib/utils';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // oxlint-disable-next-line react/only-export-components -- Helper mantido para contrato público e testes
 export function circularOffset(index: number, activeIndex: number, length: number): number {
@@ -31,6 +37,66 @@ export function CategoryCoverflow() {
   const pointerDragged = useRef(false);
   const pointerDraggedReset = useRef<ReturnType<typeof setTimeout> | null>(null);
   const length = commercialCategories.length;
+
+  useGSAP(
+    () => {
+      if (prefersReducedMotion()) return;
+
+      // Revelação suave do título e cabeçalho ao scrollar
+      gsap.fromTo(
+        '[data-category-heading]',
+        { y: 36, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        },
+      );
+
+      // Entrada suave e escalonada dos cards de categorias
+      gsap.fromTo(
+        '[data-bento-size]',
+        { y: 54, opacity: 0, scale: 0.94 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.85,
+          stagger: 0.12,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: trackRef.current,
+            start: 'top 82%',
+            toggleActions: 'play none none none',
+          },
+        },
+      );
+
+      // Efeito de flutuação 3D orgânica e suave das miniaturas
+      const floatTween = gsap.to('[data-category-figure]', {
+        y: -7,
+        duration: 3.2,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+        stagger: {
+          each: 0.4,
+          from: 'random',
+        },
+      });
+
+      return () => {
+        floatTween.kill();
+      };
+    },
+    { scope: sectionRef },
+  );
 
   useEffect(
     () => () => {
@@ -134,7 +200,7 @@ export function CategoryCoverflow() {
       className="category-coverflow commercial-section"
       aria-labelledby="categories-title"
     >
-      <div className="category-coverflow__heading">
+      <div className="category-coverflow__heading" data-category-heading>
         <p className="commercial-eyebrow">Escolha por onde começar</p>
         <h2 id="categories-title">Nossas categorias</h2>
       </div>
@@ -192,19 +258,21 @@ export function CategoryCoverflow() {
                   tabIndex={active ? 0 : -1}
                   onClick={(event) => onSlideClick(event, index)}
                 >
-                  <CommercialImage
-                    asset={category.image}
-                    sizes="(max-width: 767px) 72vw, 32vw"
-                    decorative={active && revealResult}
-                  />
-                  {category.revealImage ? (
+                  <div className="category-coverflow__image-stage" data-category-figure>
                     <CommercialImage
-                      asset={category.revealImage}
+                      asset={category.image}
                       sizes="(max-width: 767px) 72vw, 32vw"
-                      className="category-coverflow__reveal"
-                      decorative={!active || !revealResult}
+                      decorative={active && revealResult}
                     />
-                  ) : null}
+                    {category.revealImage ? (
+                      <CommercialImage
+                        asset={category.revealImage}
+                        sizes="(max-width: 767px) 72vw, 32vw"
+                        className="category-coverflow__reveal"
+                        decorative={!active || !revealResult}
+                      />
+                    ) : null}
+                  </div>
                   <span className="category-coverflow__label">{category.title}</span>
                   <span className="category-coverflow__arrow" aria-hidden="true">
                     →
