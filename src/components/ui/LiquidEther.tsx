@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { Renderer, Program, Mesh, Triangle, Color } from 'ogl';
+import { useEffect, useRef, type CSSProperties } from 'react';
+import * as THREE from 'three';
 import { prefersReducedMotion } from '@/lib/utils';
 
 export interface LiquidEtherProps {
@@ -7,14 +7,21 @@ export interface LiquidEtherProps {
   cursorSize?: number;
   isViscous?: boolean;
   viscous?: number;
+  iterationsViscous?: number;
+  iterationsPoisson?: number;
+  dt?: number;
+  BFECC?: boolean;
+  resolution?: number;
+  isBounce?: boolean;
   colors?: string[];
+  style?: CSSProperties;
+  className?: string;
   autoDemo?: boolean;
   autoSpeed?: number;
   autoIntensity?: number;
-  isBounce?: boolean;
-  resolution?: number;
-  className?: string;
-  style?: React.CSSProperties;
+  takeoverDuration?: number;
+  autoResumeDelay?: number;
+  autoRampDuration?: number;
 }
 
 export function LiquidEther({
@@ -22,258 +29,1121 @@ export function LiquidEther({
   cursorSize = 100,
   isViscous = false,
   viscous = 30,
+  iterationsViscous = 32,
+  iterationsPoisson = 32,
+  dt = 0.014,
+  BFECC = true,
+  resolution = 0.5,
+  isBounce = false,
   colors = ['#b100f6', '#ff00b2', '#f900e7'],
+  style = {},
+  className = '',
   autoDemo = true,
   autoSpeed = 0.1,
   autoIntensity = 2.5,
-  isBounce = false,
-  resolution = 0.5,
-  className = '',
-  style,
+  takeoverDuration = 0.25,
+  autoResumeDelay = 1000,
+  autoRampDuration = 0.6,
 }: LiquidEtherProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const mountRef = useRef<HTMLDivElement>(null);
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+  const webglRef = useRef<any>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const intersectionObserverRef = useRef<IntersectionObserver | null>(null);
+  const isVisibleRef = useRef(true);
+  const resizeRafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
+    if (!mountRef.current) return;
     if (prefersReducedMotion()) return;
 
-    // Safely verify WebGL context availability (e.g. in jsdom test environments or headless browsers)
+    // Proteção segura para testes Vitest e JSDOM
     if (
       typeof window === 'undefined' ||
       navigator.userAgent.includes('jsdom') ||
-      import.meta.env.MODE === 'test' ||
-      (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test')
+      import.meta.env.MODE === 'test'
     ) {
       return;
     }
+
     try {
       const testCanvas = document.createElement('canvas');
-      const glContext = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
-      if (!glContext || typeof (glContext as WebGLRenderingContext).getExtension !== 'function') return;
+      const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+      if (!gl) return;
     } catch {
       return;
     }
 
-    let animationFrameId: number;
-    let renderer: Renderer | null = null;
-
-    try {
-      renderer = new Renderer({
-        dpr: Math.min(window.devicePixelRatio, 1.5) * resolution,
-        alpha: true,
-        premultipliedAlpha: false,
-      });
-
-      const gl = renderer.gl;
-      if (!gl) return;
-
-      container.appendChild(gl.canvas);
-      gl.canvas.style.width = '100%';
-      gl.canvas.style.height = '100%';
-      gl.canvas.style.display = 'block';
-
-      const geometry = new Triangle(gl);
-
-      const parsedColors = colors.map((c) => new Color(c));
-      const color1 = parsedColors[0] || new Color('#b100f6');
-      const color2 = parsedColors[1] || new Color('#ff00b2');
-      const color3 = parsedColors[2] || new Color('#f900e7');
-
-      const vert = /* glsl */ `
-        attribute vec2 uv;
-        attribute vec2 position;
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = vec4(position, 0.0, 1.0);
+    function makePaletteTexture(stops: string[]) {
+      let arr: string[];
+      if (Array.isArray(stops) && stops.length > 0) {
+        if (stops.length === 1) {
+          arr = [stops[0], stops[0]];
+        } else {
+          arr = stops;
         }
-      `;
+      } else {
+        arr = ['#ffffff', '#ffffff'];
+      }
+      const w = arr.length;
+      const data = new Uint8Array(w * 4);
+      for (let i = 0; i < w; i++) {
+        const c = new THREE.Color(arr[i]);
+        data[i * 4 + 0] = Math.round(c.r * 255);
+        data[i * 4 + 1] = Math.round(c.g * 255);
+        data[i * 4 + 2] = Math.round(c.b * 255);
+        data[i * 4 + 3] = 255;
+      }
+      const tex = new THREE.DataTexture(data, w, 1, THREE.RGBAFormat);
+      tex.magFilter = THREE.LinearFilter;
+      tex.minFilter = THREE.LinearFilter;
+      tex.wrapS = THREE.ClampToEdgeWrapping;
+      tex.wrapT = THREE.ClampToEdgeWrapping;
+      tex.generateMipmaps = false;
+      tex.needsUpdate = true;
+      return tex;
+    }
 
-      const frag = /* glsl */ `
-        precision highp float;
-        uniform float uTime;
-        uniform vec2 uResolution;
-        uniform vec2 uMouse;
-        uniform vec3 uColor1;
-        uniform vec3 uColor2;
-        uniform vec3 uColor3;
-        uniform float uAutoSpeed;
-        uniform float uAutoIntensity;
-        uniform float uMouseForce;
-        uniform float uAlpha;
-        varying vec2 vUv;
+    const paletteTex = makePaletteTexture(colors);
+    const bgVec4 = new THREE.Vector4(0, 0, 0, 0);
 
-        vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-        float snoise(vec2 v){
-          const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-                            -0.577350269189626, 0.024390243902439);
-          vec2 i  = floor(v + dot(v, C.yy) );
-          vec2 x0 = v -   i + dot(i, C.xx);
-          vec2 i1;
-          i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-          vec4 x12 = x0.xyxy + C.xxzz;
-          x12.xy -= i1;
-          i = mod(i, 289.0);
-          vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
-          + i.x + vec3(0.0, i1.x, 1.0 ));
-          vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-          m = m*m;
-          m = m*m;
-          vec3 x = 2.0 * fract(p * C.www) - 1.0;
-          vec3 h = abs(x) - 0.5;
-          vec3 ox = floor(x + 0.5);
-          vec3 a0 = x - ox;
-          m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-          vec3 g;
-          g.x  = a0.x  * x0.x  + h.x  * x0.y;
-          g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-          return 130.0 * dot(m, g);
+    class CommonClass {
+      width = 0;
+      height = 0;
+      aspect = 1;
+      pixelRatio = 1;
+      isMobile = false;
+      breakpoint = 768;
+      fboWidth: number | null = null;
+      fboHeight: number | null = null;
+      time = 0;
+      delta = 0;
+      container: HTMLElement | null = null;
+      renderer: THREE.WebGLRenderer | null = null;
+      clock: THREE.Clock | null = null;
+
+      init(container: HTMLElement) {
+        this.container = container;
+        this.pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        this.resize();
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        this.renderer.autoClear = false;
+        this.renderer.setClearColor(new THREE.Color(0x000000), 0);
+        this.renderer.setPixelRatio(this.pixelRatio);
+        this.renderer.setSize(this.width, this.height);
+        this.renderer.domElement.style.width = '100%';
+        this.renderer.domElement.style.height = '100%';
+        this.renderer.domElement.style.display = 'block';
+        this.clock = new THREE.Clock();
+        this.clock.start();
+      }
+      resize() {
+        if (!this.container) return;
+        const rect = this.container.getBoundingClientRect();
+        this.width = Math.max(1, Math.floor(rect.width || window.innerWidth));
+        this.height = Math.max(1, Math.floor(rect.height || window.innerHeight));
+        this.aspect = this.width / this.height;
+        if (this.renderer) this.renderer.setSize(this.width, this.height, false);
+      }
+      update() {
+        if (!this.clock) return;
+        this.delta = this.clock.getDelta();
+        this.time += this.delta;
+      }
+    }
+    const Common = new CommonClass();
+
+    class MouseClass {
+      mouseMoved = false;
+      coords = new THREE.Vector2();
+      coords_old = new THREE.Vector2();
+      diff = new THREE.Vector2();
+      timer: number | null = null;
+      container: HTMLElement | null = null;
+      docTarget: Document | null = null;
+      listenerTarget: (Window & typeof globalThis) | null = null;
+      isHoverInside = false;
+      hasUserControl = false;
+      isAutoActive = false;
+      autoIntensity = 2.0;
+      takeoverActive = false;
+      takeoverStartTime = 0;
+      takeoverDuration = 0.25;
+      takeoverFrom = new THREE.Vector2();
+      takeoverTo = new THREE.Vector2();
+      onInteract: (() => void) | null = null;
+      _onMouseMove: (e: MouseEvent) => void;
+      _onTouchStart: (e: TouchEvent) => void;
+      _onTouchMove: (e: TouchEvent) => void;
+      _onTouchEnd: () => void;
+      _onDocumentLeave: () => void;
+
+      constructor() {
+        this._onMouseMove = this.onDocumentMouseMove.bind(this);
+        this._onTouchStart = this.onDocumentTouchStart.bind(this);
+        this._onTouchMove = this.onDocumentTouchMove.bind(this);
+        this._onTouchEnd = this.onTouchEnd.bind(this);
+        this._onDocumentLeave = this.onDocumentLeave.bind(this);
+      }
+
+      init(container: HTMLElement) {
+        this.container = container;
+        this.docTarget = container.ownerDocument || null;
+        const defaultView =
+          (this.docTarget && this.docTarget.defaultView) || (typeof window !== 'undefined' ? window : null);
+        if (!defaultView) return;
+        this.listenerTarget = defaultView;
+        this.listenerTarget.addEventListener('mousemove', this._onMouseMove);
+        this.listenerTarget.addEventListener('touchstart', this._onTouchStart, { passive: true });
+        this.listenerTarget.addEventListener('touchmove', this._onTouchMove, { passive: true });
+        this.listenerTarget.addEventListener('touchend', this._onTouchEnd);
+        if (this.docTarget) {
+          this.docTarget.addEventListener('mouseleave', this._onDocumentLeave);
         }
-
-        void main() {
-          vec2 st = gl_FragCoord.xy / uResolution.xy;
-          st.y *= uResolution.y / uResolution.x;
-
-          float t = uTime * uAutoSpeed;
-
-          vec2 mouseNorm = uMouse / uResolution;
-          float dist = distance(vUv, mouseNorm);
-          float mouseEffect = smoothstep(0.5, 0.0, dist) * (uMouseForce * 0.08);
-
-          vec2 q = vec2(0.0);
-          q.x = snoise(st * 2.2 + vec2(0.0, t * 0.35) + (vUv - mouseNorm) * mouseEffect * 2.5);
-          q.y = snoise(st * 2.2 + vec2(1.0, t * 0.28) + (vUv - mouseNorm) * mouseEffect * 2.5);
-
-          vec2 r = vec2(0.0);
-          r.x = snoise(st * 2.2 + 1.2 * q + vec2(1.7, 9.2) + 0.15 * t + mouseEffect * 0.6);
-          r.y = snoise(st * 2.2 + 1.2 * q + vec2(8.3, 2.8) + 0.126 * t + mouseEffect * 0.6);
-
-          float f = snoise(st * 2.2 + r * uAutoIntensity);
-
-          float pattern = sin(f * 8.5 + t * 0.4) * 0.5 + 0.5;
-          pattern = pow(pattern, 1.6);
-
-          vec3 bgDark = vec3(0.01, 0.0, 0.02);
-          vec3 color = mix(bgDark, uColor1, smoothstep(0.12, 0.55, pattern));
-          color = mix(color, uColor2, smoothstep(0.42, 0.85, pattern));
-          color = mix(color, uColor3, smoothstep(0.72, 1.0, pattern) * 0.95);
-
-          float streaks = sin(length(q) * 10.0 - t * 0.6) * 0.5 + 0.5;
-          color += uColor2 * pow(streaks, 3.5) * 0.4;
-
-          gl_FragColor = vec4(color, 1.0);
+      }
+      dispose() {
+        if (this.listenerTarget) {
+          this.listenerTarget.removeEventListener('mousemove', this._onMouseMove);
+          this.listenerTarget.removeEventListener('touchstart', this._onTouchStart);
+          this.listenerTarget.removeEventListener('touchmove', this._onTouchMove);
+          this.listenerTarget.removeEventListener('touchend', this._onTouchEnd);
         }
-      `;
+        if (this.docTarget) {
+          this.docTarget.removeEventListener('mouseleave', this._onDocumentLeave);
+        }
+        this.listenerTarget = null;
+        this.docTarget = null;
+        this.container = null;
+      }
+      isPointInside(clientX: number, clientY: number) {
+        if (!this.container) return false;
+        const rect = this.container.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return false;
+        return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
+      }
+      updateHoverState(clientX: number, clientY: number) {
+        this.isHoverInside = this.isPointInside(clientX, clientY);
+        return this.isHoverInside;
+      }
+      setCoords(x: number, y: number) {
+        if (!this.container) return;
+        if (this.timer) window.clearTimeout(this.timer);
+        const rect = this.container.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return;
+        const nx = (x - rect.left) / rect.width;
+        const ny = (y - rect.top) / rect.height;
+        this.coords.set(nx * 2 - 1, -(ny * 2 - 1));
+        this.mouseMoved = true;
+        this.timer = window.setTimeout(() => {
+          this.mouseMoved = false;
+        }, 100);
+      }
+      setNormalized(nx: number, ny: number) {
+        this.coords.set(nx, ny);
+        this.mouseMoved = true;
+      }
+      onDocumentMouseMove(event: MouseEvent) {
+        if (!this.updateHoverState(event.clientX, event.clientY)) return;
+        if (this.onInteract) this.onInteract();
+        if (this.isAutoActive && !this.hasUserControl && !this.takeoverActive) {
+          if (!this.container) return;
+          const rect = this.container.getBoundingClientRect();
+          if (rect.width === 0 || rect.height === 0) return;
+          const nx = (event.clientX - rect.left) / rect.width;
+          const ny = (event.clientY - rect.top) / rect.height;
+          this.takeoverFrom.copy(this.coords);
+          this.takeoverTo.set(nx * 2 - 1, -(ny * 2 - 1));
+          this.takeoverStartTime = performance.now();
+          this.takeoverActive = true;
+          this.hasUserControl = true;
+          this.isAutoActive = false;
+          return;
+        }
+        this.setCoords(event.clientX, event.clientY);
+        this.hasUserControl = true;
+      }
+      onDocumentTouchStart(event: TouchEvent) {
+        if (event.touches.length !== 1) return;
+        const t = event.touches[0];
+        if (!this.updateHoverState(t.clientX, t.clientY)) return;
+        if (this.onInteract) this.onInteract();
+        this.setCoords(t.clientX, t.clientY);
+        this.hasUserControl = true;
+      }
+      onDocumentTouchMove(event: TouchEvent) {
+        if (event.touches.length !== 1) return;
+        const t = event.touches[0];
+        if (!this.updateHoverState(t.clientX, t.clientY)) return;
+        if (this.onInteract) this.onInteract();
+        this.setCoords(t.clientX, t.clientY);
+      }
+      onTouchEnd() {
+        this.isHoverInside = false;
+      }
+      onDocumentLeave() {
+        this.isHoverInside = false;
+      }
+      update() {
+        if (this.takeoverActive) {
+          const t = (performance.now() - this.takeoverStartTime) / (this.takeoverDuration * 1000);
+          if (t >= 1) {
+            this.takeoverActive = false;
+            this.coords.copy(this.takeoverTo);
+            this.coords_old.copy(this.coords);
+            this.diff.set(0, 0);
+          } else {
+            const k = t * t * (3 - 2 * t);
+            this.coords.copy(this.takeoverFrom).lerp(this.takeoverTo, k);
+          }
+        }
+        this.diff.subVectors(this.coords, this.coords_old);
+        this.coords_old.copy(this.coords);
+        if (this.coords_old.x === 0 && this.coords_old.y === 0) this.diff.set(0, 0);
+        if (this.isAutoActive && !this.takeoverActive) this.diff.multiplyScalar(this.autoIntensity);
+      }
+    }
+    const Mouse = new MouseClass();
 
-      const program = new Program(gl, {
-        vertex: vert,
-        fragment: frag,
-        uniforms: {
-          uTime: { value: 0 },
-          uResolution: { value: [gl.canvas.width, gl.canvas.height] },
-          uMouse: { value: [gl.canvas.width * 0.5, gl.canvas.height * 0.5] },
-          uColor1: { value: color1 },
-          uColor2: { value: color2 },
-          uColor3: { value: color3 },
-          uAutoSpeed: { value: autoSpeed },
-          uAutoIntensity: { value: autoIntensity },
-          uMouseForce: { value: mouseForce },
-        },
-        transparent: true,
-      });
+    class AutoDriver {
+      mouse: MouseClass;
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      manager: any;
+      enabled: boolean;
+      speed: number;
+      resumeDelay: number;
+      rampDurationMs: number;
+      active = false;
+      current = new THREE.Vector2(0, 0);
+      target = new THREE.Vector2();
+      lastTime = performance.now();
+      activationTime = 0;
+      margin = 0.2;
+      _tmpDir = new THREE.Vector2();
 
-      const mesh = new Mesh(gl, { geometry, program });
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(mouse: MouseClass, manager: any, opts: any) {
+        this.mouse = mouse;
+        this.manager = manager;
+        this.enabled = opts.enabled;
+        this.speed = opts.speed;
+        this.resumeDelay = opts.resumeDelay || 3000;
+        this.rampDurationMs = (opts.rampDuration || 0) * 1000;
+        this.pickNewTarget();
+      }
+      pickNewTarget() {
+        const r = Math.random;
+        this.target.set((r() * 2 - 1) * (1 - this.margin), (r() * 2 - 1) * (1 - this.margin));
+      }
+      forceStop() {
+        this.active = false;
+        this.mouse.isAutoActive = false;
+      }
+      update() {
+        if (!this.enabled) return;
+        const now = performance.now();
+        const idle = now - this.manager.lastUserInteraction;
+        if (idle < this.resumeDelay) {
+          if (this.active) this.forceStop();
+          return;
+        }
+        if (this.mouse.isHoverInside) {
+          if (this.active) this.forceStop();
+          return;
+        }
+        if (!this.active) {
+          this.active = true;
+          this.current.copy(this.mouse.coords);
+          this.lastTime = now;
+          this.activationTime = now;
+        }
+        if (!this.active) return;
+        this.mouse.isAutoActive = true;
+        let dtSec = (now - this.lastTime) / 1000;
+        this.lastTime = now;
+        if (dtSec > 0.2) dtSec = 0.016;
+        const dir = this._tmpDir.subVectors(this.target, this.current);
+        const dist = dir.length();
+        if (dist < 0.01) {
+          this.pickNewTarget();
+          return;
+        }
+        dir.normalize();
+        let ramp = 1;
+        if (this.rampDurationMs > 0) {
+          const t = Math.min(1, (now - this.activationTime) / this.rampDurationMs);
+          ramp = t * t * (3 - 2 * t);
+        }
+        const step = this.speed * dtSec * ramp;
+        const move = Math.min(step, dist);
+        this.current.addScaledVector(dir, move);
+        this.mouse.setNormalized(this.current.x, this.current.y);
+      }
+    }
 
-      const handleResize = () => {
-        if (!container || !renderer) return;
-        const width = container.clientWidth || window.innerWidth || 1080;
-        const height = container.clientHeight || window.innerHeight || 1080;
-        renderer.setSize(width, height);
-        program.uniforms.uResolution.value = [width, height];
+    const face_vert = `
+  attribute vec3 position;
+  uniform vec2 px;
+  uniform vec2 boundarySpace;
+  varying vec2 uv;
+  precision highp float;
+  void main(){
+  vec3 pos = position;
+  vec2 scale = 1.0 - boundarySpace * 2.0;
+  pos.xy = pos.xy * scale;
+  uv = vec2(0.5)+(pos.xy)*0.5;
+  gl_Position = vec4(pos, 1.0);
+}
+`;
+    const line_vert = `
+  attribute vec3 position;
+  uniform vec2 px;
+  precision highp float;
+  varying vec2 uv;
+  void main(){\n  vec3 pos = position;\n  uv = 0.5 + pos.xy * 0.5;\n  vec2 n = sign(pos.xy);\n  pos.xy = abs(pos.xy) - px * 1.0;\n  pos.xy *= n;\n  gl_Position = vec4(pos, 1.0);\n}\n`;
+    const mouse_vert = `
+    precision highp float;
+    attribute vec3 position;
+    attribute vec2 uv;
+    uniform vec2 center;
+    uniform vec2 scale;
+    uniform vec2 px;
+    varying vec2 vUv;
+    void main(){\n    vec2 pos = position.xy * scale * 2.0 * px + center;\n    vUv = uv;\n    gl_Position = vec4(pos, 0.0, 1.0);\n}\n`;
+    const advection_frag = `
+    precision highp float;
+    uniform sampler2D velocity;
+    uniform float dt;
+    uniform bool isBFECC;
+    uniform vec2 fboSize;
+    uniform vec2 px;
+    varying vec2 uv;
+    void main(){\n    vec2 ratio = max(fboSize.x, fboSize.y) / fboSize;\n    if(isBFECC == false){\n        vec2 vel = texture2D(velocity, uv).xy;\n        vec2 uv2 = uv - vel * dt * ratio;\n        vec2 newVel = texture2D(velocity, uv2).xy;\n        gl_FragColor = vec4(newVel, 0.0, 0.0);\n    } else {\n        vec2 spot_new = uv;\n        vec2 vel_old = texture2D(velocity, uv).xy;\n        vec2 spot_old = spot_new - vel_old * dt * ratio;\n        vec2 vel_new1 = texture2D(velocity, spot_old).xy;\n        vec2 spot_new2 = spot_old + vel_new1 * dt * ratio;\n        vec2 error = spot_new2 - spot_new;\n        vec2 spot_new3 = spot_new - error / 2.0;\n        vec2 vel_2 = texture2D(velocity, spot_new3).xy;\n        vec2 spot_old2 = spot_new3 - vel_2 * dt * ratio;\n        vec2 newVel2 = texture2D(velocity, spot_old2).xy; \n        gl_FragColor = vec4(newVel2, 0.0, 0.0);\n    }\n}\n`;
+    const color_frag = `
+    precision highp float;
+    uniform sampler2D velocity;
+    uniform sampler2D palette;
+    uniform vec4 bgColor;
+    varying vec2 uv;
+    void main(){\n    vec2 vel = texture2D(velocity, uv).xy;\n    float lenv = clamp(length(vel), 0.0, 1.0);\n    vec3 c = texture2D(palette, vec2(lenv, 0.5)).rgb;\n    vec3 outRGB = mix(bgColor.rgb, c, lenv);\n    float outA = mix(bgColor.a, 1.0, lenv);\n    gl_FragColor = vec4(outRGB, outA);\n}\n`;
+    const divergence_frag = `
+    precision highp float;
+    uniform sampler2D velocity;
+    uniform float dt;
+    uniform vec2 px;
+    varying vec2 uv;
+    void main(){\n    float x0 = texture2D(velocity, uv-vec2(px.x, 0.0)).x;\n    float x1 = texture2D(velocity, uv+vec2(px.x, 0.0)).x;\n    float y0 = texture2D(velocity, uv-vec2(0.0, px.y)).y;\n    float y1 = texture2D(velocity, uv+vec2(0.0, px.y)).y;\n    float divergence = (x1 - x0 + y1 - y0) / 2.0;\n    gl_FragColor = vec4(divergence / dt);\n}\n`;
+    const externalForce_frag = `
+    precision highp float;
+    uniform vec2 force;
+    uniform vec2 center;
+    uniform vec2 scale;
+    uniform vec2 px;
+    varying vec2 vUv;
+    void main(){\n    vec2 circle = (vUv - 0.5) * 2.0;\n    float d = 1.0 - min(length(circle), 1.0);\n    d *= d;\n    gl_FragColor = vec4(force * d, 0.0, 1.0);\n}\n`;
+    const poisson_frag = `
+    precision highp float;
+    uniform sampler2D pressure;
+    uniform sampler2D divergence;
+    uniform vec2 px;
+    varying vec2 uv;
+    void main(){\n    float p0 = texture2D(pressure, uv + vec2(px.x * 2.0, 0.0)).r;\n    float p1 = texture2D(pressure, uv - vec2(px.x * 2.0, 0.0)).r;\n    float p2 = texture2D(pressure, uv + vec2(0.0, px.y * 2.0)).r;\n    float p3 = texture2D(pressure, uv - vec2(0.0, px.y * 2.0)).r;\n    float div = texture2D(divergence, uv).r;\n    float newP = (p0 + p1 + p2 + p3) / 4.0 - div;\n    gl_FragColor = vec4(newP);\n}\n`;
+    const pressure_frag = `
+    precision highp float;
+    uniform sampler2D pressure;
+    uniform sampler2D velocity;
+    uniform vec2 px;
+    uniform float dt;
+    varying vec2 uv;
+    void main(){\n    float step = 1.0;\n    float p0 = texture2D(pressure, uv + vec2(px.x * step, 0.0)).r;\n    float p1 = texture2D(pressure, uv - vec2(px.x * step, 0.0)).r;\n    float p2 = texture2D(pressure, uv + vec2(0.0, px.y * step)).r;\n    float p3 = texture2D(pressure, uv - vec2(0.0, px.y * step)).r;\n    vec2 v = texture2D(velocity, uv).xy;\n    vec2 gradP = vec2(p0 - p1, p2 - p3) * 0.5;\n    v = v - gradP * dt;\n    gl_FragColor = vec4(v, 0.0, 1.0);\n}\n`;
+    const viscous_frag = `
+    precision highp float;
+    uniform sampler2D velocity;
+    uniform sampler2D velocity_new;
+    uniform float v;
+    uniform vec2 px;
+    uniform float dt;
+    varying vec2 uv;
+    void main(){\n    vec2 old = texture2D(velocity, uv).xy;\n    vec2 new0 = texture2D(velocity_new, uv + vec2(px.x * 2.0, 0.0)).xy;\n    vec2 new1 = texture2D(velocity_new, uv - vec2(px.x * 2.0, 0.0)).xy;\n    vec2 new2 = texture2D(velocity_new, uv + vec2(0.0, px.y * 2.0)).xy;\n    vec2 new3 = texture2D(velocity_new, uv - vec2(0.0, px.y * 2.0)).xy;\n    vec2 newv = 4.0 * old + v * dt * (new0 + new1 + new2 + new3);\n    newv /= 4.0 * (1.0 + v * dt);\n    gl_FragColor = vec4(newv, 0.0, 0.0);\n}\n`;
+
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+    class ShaderPass {
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      props: any;
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      uniforms: any;
+      scene: THREE.Scene | null = null;
+      camera: THREE.Camera | null = null;
+      material: THREE.RawShaderMaterial | null = null;
+      geometry: THREE.PlaneGeometry | null = null;
+      plane: THREE.Mesh | null = null;
+
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(props: any) {
+        this.props = props || {};
+        this.uniforms = this.props.material?.uniforms;
+      }
+      init() {
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.Camera();
+        if (this.uniforms) {
+          this.material = new THREE.RawShaderMaterial(this.props.material);
+          this.geometry = new THREE.PlaneGeometry(2.0, 2.0);
+          this.plane = new THREE.Mesh(this.geometry, this.material);
+          this.scene.add(this.plane);
+        }
+      }
+      update() {
+        if (!Common.renderer || !this.scene || !this.camera) return;
+        Common.renderer.setRenderTarget(this.props.output || null);
+        Common.renderer.render(this.scene, this.camera);
+        Common.renderer.setRenderTarget(null);
+      }
+    }
+
+    class Advection extends ShaderPass {
+      line: THREE.LineSegments | null = null;
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(simProps: any) {
+        super({
+          material: {
+            vertexShader: face_vert,
+            fragmentShader: advection_frag,
+            uniforms: {
+              boundarySpace: { value: simProps.cellScale },
+              px: { value: simProps.cellScale },
+              fboSize: { value: simProps.fboSize },
+              velocity: { value: simProps.src.texture },
+              dt: { value: simProps.dt },
+              isBFECC: { value: true }
+            }
+          },
+          output: simProps.dst
+        });
+        this.uniforms = this.props.material.uniforms;
+        this.init();
+      }
+      init() {
+        super.init();
+        this.createBoundary();
+      }
+      createBoundary() {
+        const boundaryG = new THREE.BufferGeometry();
+        const vertices_boundary = new Float32Array([
+          -1, -1, 0, -1, 1, 0, -1, 1, 0, 1, 1, 0, 1, 1, 0, 1, -1, 0, 1, -1, 0, -1, -1, 0
+        ]);
+        boundaryG.setAttribute('position', new THREE.BufferAttribute(vertices_boundary, 3));
+        const boundaryM = new THREE.RawShaderMaterial({
+          vertexShader: line_vert,
+          fragmentShader: advection_frag,
+          uniforms: this.uniforms
+        });
+        this.line = new THREE.LineSegments(boundaryG, boundaryM);
+        if (this.scene) this.scene.add(this.line);
+      }
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      update(params: any = {}) {
+        if (this.uniforms) {
+          if (params.dt !== undefined) this.uniforms.dt.value = params.dt;
+          if (params.BFECC !== undefined) this.uniforms.isBFECC.value = params.BFECC;
+        }
+        if (this.line && params.isBounce !== undefined) {
+          this.line.visible = params.isBounce;
+        }
+        super.update();
+      }
+    }
+
+    class ExternalForce extends ShaderPass {
+      mouse: THREE.Mesh | null = null;
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(simProps: any) {
+        super({ output: simProps.dst });
+        this.init(simProps);
+      }
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      init(simProps?: any) {
+        super.init();
+        if (!simProps) return;
+        const mouseG = new THREE.PlaneGeometry(1, 1);
+        const mouseM = new THREE.RawShaderMaterial({
+          vertexShader: mouse_vert,
+          fragmentShader: externalForce_frag,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          uniforms: {
+            px: { value: simProps.cellScale },
+            force: { value: new THREE.Vector2(0.0, 0.0) },
+            center: { value: new THREE.Vector2(0.0, 0.0) },
+            scale: { value: new THREE.Vector2(simProps.cursor_size, simProps.cursor_size) }
+          }
+        });
+        this.mouse = new THREE.Mesh(mouseG, mouseM);
+        if (this.scene) this.scene.add(this.mouse);
+      }
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      update(props: any = {}) {
+        if (!this.mouse) return;
+        const forceX = (Mouse.diff.x / 2) * (props.mouse_force || 20);
+        const forceY = (Mouse.diff.y / 2) * (props.mouse_force || 20);
+        const cursorSize = props.cursor_size || 100;
+        const cellScale = props.cellScale || new THREE.Vector2(1 / 512, 1 / 512);
+        const cursorSizeX = cursorSize * cellScale.x;
+        const cursorSizeY = cursorSize * cellScale.y;
+        const centerX = Math.min(
+          Math.max(Mouse.coords.x, -1 + cursorSizeX + cellScale.x * 2),
+          1 - cursorSizeX - cellScale.x * 2
+        );
+        const centerY = Math.min(
+          Math.max(Mouse.coords.y, -1 + cursorSizeY + cellScale.y * 2),
+          1 - cursorSizeY - cellScale.y * 2
+        );
+        // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+        const uniforms = (this.mouse.material as any).uniforms;
+        uniforms.force.value.set(forceX, forceY);
+        uniforms.center.value.set(centerX, centerY);
+        uniforms.scale.value.set(cursorSize, cursorSize);
+        super.update();
+      }
+    }
+
+    class Viscous extends ShaderPass {
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(simProps: any) {
+        super({
+          material: {
+            vertexShader: face_vert,
+            fragmentShader: viscous_frag,
+            uniforms: {
+              boundarySpace: { value: simProps.boundarySpace },
+              velocity: { value: simProps.src.texture },
+              velocity_new: { value: simProps.dst_.texture },
+              v: { value: simProps.viscous },
+              px: { value: simProps.cellScale },
+              dt: { value: simProps.dt }
+            }
+          },
+          output: simProps.dst,
+          output0: simProps.dst_,
+          output1: simProps.dst
+        });
+        this.init();
+      }
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      update(params: any = {}) {
+        let fbo_in, fbo_out;
+        this.uniforms.v.value = params.viscous;
+        const iterations = params.iterations || 32;
+        for (let i = 0; i < iterations; i++) {
+          if (i % 2 === 0) {
+            fbo_in = this.props.output0;
+            fbo_out = this.props.output1;
+          } else {
+            fbo_in = this.props.output1;
+            fbo_out = this.props.output0;
+          }
+          this.uniforms.velocity_new.value = fbo_in.texture;
+          this.props.output = fbo_out;
+          this.uniforms.dt.value = params.dt;
+          super.update();
+        }
+        return fbo_out;
+      }
+    }
+
+    class Divergence extends ShaderPass {
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(simProps: any) {
+        super({
+          material: {
+            vertexShader: face_vert,
+            fragmentShader: divergence_frag,
+            uniforms: {
+              boundarySpace: { value: simProps.boundarySpace },
+              velocity: { value: simProps.src.texture },
+              px: { value: simProps.cellScale },
+              dt: { value: simProps.dt }
+            }
+          },
+          output: simProps.dst
+        });
+        this.init();
+      }
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      update(params: any = {}) {
+        if (params.vel) {
+          this.uniforms.velocity.value = params.vel.texture;
+        }
+        super.update();
+      }
+    }
+
+    class Poisson extends ShaderPass {
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(simProps: any) {
+        super({
+          material: {
+            vertexShader: face_vert,
+            fragmentShader: poisson_frag,
+            uniforms: {
+              boundarySpace: { value: simProps.boundarySpace },
+              pressure: { value: simProps.dst_.texture },
+              divergence: { value: simProps.src.texture },
+              px: { value: simProps.cellScale }
+            }
+          },
+          output: simProps.dst,
+          output0: simProps.dst_,
+          output1: simProps.dst
+        });
+        this.init();
+      }
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      update(params: any = {}) {
+        let p_in, p_out;
+        const iterations = params.iterations || 32;
+        for (let i = 0; i < iterations; i++) {
+          if (i % 2 === 0) {
+            p_in = this.props.output0;
+            p_out = this.props.output1;
+          } else {
+            p_in = this.props.output1;
+            p_out = this.props.output0;
+          }
+          this.uniforms.pressure.value = p_in.texture;
+          this.props.output = p_out;
+          super.update();
+        }
+        return p_out;
+      }
+    }
+
+    class Pressure extends ShaderPass {
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(simProps: any) {
+        super({
+          material: {
+            vertexShader: face_vert,
+            fragmentShader: pressure_frag,
+            uniforms: {
+              boundarySpace: { value: simProps.boundarySpace },
+              pressure: { value: simProps.src_p.texture },
+              velocity: { value: simProps.src_v.texture },
+              px: { value: simProps.cellScale },
+              dt: { value: simProps.dt }
+            }
+          },
+          output: simProps.dst
+        });
+        this.init();
+      }
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      update(params: any = {}) {
+        if (params.vel) this.uniforms.velocity.value = params.vel.texture;
+        if (params.pressure) this.uniforms.pressure.value = params.pressure.texture;
+        super.update();
+      }
+    }
+
+    class Simulation {
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      options: any;
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      fbos: Record<string, THREE.WebGLRenderTarget | null> = {
+        vel_0: null,
+        vel_1: null,
+        vel_viscous0: null,
+        vel_viscous1: null,
+        div: null,
+        pressure_0: null,
+        pressure_1: null
       };
+      fboSize = new THREE.Vector2();
+      cellScale = new THREE.Vector2();
+      boundarySpace = new THREE.Vector2();
+      advection: Advection | null = null;
+      externalForce: ExternalForce | null = null;
+      viscous: Viscous | null = null;
+      divergence: Divergence | null = null;
+      poisson: Poisson | null = null;
+      pressure: Pressure | null = null;
 
-      handleResize();
-      window.addEventListener('resize', handleResize);
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(options: any = {}) {
+        this.options = {
+          iterations_poisson: 32,
+          iterations_viscous: 32,
+          mouse_force: 20,
+          resolution: 0.5,
+          cursor_size: 100,
+          viscous: 30,
+          isBounce: false,
+          dt: 0.014,
+          isViscous: false,
+          BFECC: true,
+          ...options
+        };
+        this.init();
+      }
+      init() {
+        this.calcSize();
+        this.createAllFBO();
+        this.createShaderPass();
+      }
+      getFloatType() {
+        const isIOS = /(iPad|iPhone|iPod)/i.test(navigator.userAgent);
+        return isIOS ? THREE.HalfFloatType : THREE.FloatType;
+      }
+      createAllFBO() {
+        const type = this.getFloatType();
+        const opts = {
+          type,
+          depthBuffer: false,
+          stencilBuffer: false,
+          minFilter: THREE.LinearFilter,
+          magFilter: THREE.LinearFilter,
+          wrapS: THREE.ClampToEdgeWrapping,
+          wrapT: THREE.ClampToEdgeWrapping
+        };
+        for (const key in this.fbos) {
+          this.fbos[key] = new THREE.WebGLRenderTarget(this.fboSize.x, this.fboSize.y, opts);
+        }
+      }
+      createShaderPass() {
+        this.advection = new Advection({
+          cellScale: this.cellScale,
+          fboSize: this.fboSize,
+          dt: this.options.dt,
+          src: this.fbos.vel_0,
+          dst: this.fbos.vel_1
+        });
+        this.externalForce = new ExternalForce({
+          cellScale: this.cellScale,
+          cursor_size: this.options.cursor_size,
+          dst: this.fbos.vel_1
+        });
+        this.viscous = new Viscous({
+          cellScale: this.cellScale,
+          boundarySpace: this.boundarySpace,
+          viscous: this.options.viscous,
+          src: this.fbos.vel_1,
+          dst: this.fbos.vel_viscous1,
+          dst_: this.fbos.vel_viscous0,
+          dt: this.options.dt
+        });
+        this.divergence = new Divergence({
+          cellScale: this.cellScale,
+          boundarySpace: this.boundarySpace,
+          src: this.fbos.vel_viscous0,
+          dst: this.fbos.div,
+          dt: this.options.dt
+        });
+        this.poisson = new Poisson({
+          cellScale: this.cellScale,
+          boundarySpace: this.boundarySpace,
+          src: this.fbos.div,
+          dst: this.fbos.pressure_1,
+          dst_: this.fbos.pressure_0
+        });
+        this.pressure = new Pressure({
+          cellScale: this.cellScale,
+          boundarySpace: this.boundarySpace,
+          src_p: this.fbos.pressure_0,
+          src_v: this.fbos.vel_viscous0,
+          dst: this.fbos.vel_0,
+          dt: this.options.dt
+        });
+      }
+      calcSize() {
+        const width = Math.max(1, Math.round(this.options.resolution * Common.width));
+        const height = Math.max(1, Math.round(this.options.resolution * Common.height));
+        const px_x = 1.0 / width;
+        const px_y = 1.0 / height;
+        this.cellScale.set(px_x, px_y);
+        this.fboSize.set(width, height);
+      }
+      resize() {
+        this.calcSize();
+        for (const key in this.fbos) {
+          this.fbos[key]?.setSize(this.fboSize.x, this.fboSize.y);
+        }
+      }
+      update() {
+        if (this.options.isBounce) {
+          this.boundarySpace.set(0, 0);
+        } else {
+          this.boundarySpace.copy(this.cellScale);
+        }
+        this.advection?.update({
+          dt: this.options.dt,
+          isBounce: this.options.isBounce,
+          BFECC: this.options.BFECC
+        });
+        this.externalForce?.update({
+          cursor_size: this.options.cursor_size,
+          mouse_force: this.options.mouse_force,
+          cellScale: this.cellScale
+        });
+        let vel = this.fbos.vel_1;
+        if (this.options.isViscous && this.viscous) {
+          vel = this.viscous.update({
+            viscous: this.options.viscous,
+            iterations: this.options.iterations_viscous,
+            dt: this.options.dt
+          });
+        }
+        this.divergence?.update({ vel });
+        const pressure = this.poisson?.update({
+          iterations: this.options.iterations_poisson
+        });
+        this.pressure?.update({ vel, pressure });
+      }
+    }
 
-      let mouseX = gl.canvas.width * 0.5;
-      let mouseY = gl.canvas.height * 0.5;
+    class Output {
+      simulation: Simulation | null = null;
+      scene: THREE.Scene | null = null;
+      camera: THREE.Camera | null = null;
+      output: THREE.Mesh | null = null;
 
-      const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      constructor() {
+        this.init();
+      }
+      init() {
+        this.simulation = new Simulation();
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.Camera();
+        this.output = new THREE.Mesh(
+          new THREE.PlaneGeometry(2, 2),
+          new THREE.RawShaderMaterial({
+            vertexShader: face_vert,
+            fragmentShader: color_frag,
+            transparent: true,
+            depthWrite: false,
+            uniforms: {
+              velocity: { value: this.simulation.fbos.vel_0?.texture },
+              boundarySpace: { value: new THREE.Vector2() },
+              palette: { value: paletteTex },
+              bgColor: { value: bgVec4 }
+            }
+          })
+        );
+        this.scene.add(this.output);
+      }
+      resize() {
+        this.simulation?.resize();
+      }
+      render() {
+        if (!Common.renderer || !this.scene || !this.camera) return;
+        Common.renderer.setRenderTarget(null);
+        Common.renderer.render(this.scene, this.camera);
+      }
+      update() {
+        this.simulation?.update();
+        this.render();
+      }
+    }
+
+    class WebGLManager {
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      props: any;
+      lastUserInteraction = performance.now();
+      autoDriver: AutoDriver | null = null;
+      output: Output | null = null;
+      _loop: () => void;
+      _resize: () => void;
+      _onVisibility: () => void;
+      running = false;
+
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(props: any) {
+        this.props = props;
+        Common.init(props.$wrapper);
+        Mouse.init(props.$wrapper);
+        Mouse.autoIntensity = props.autoIntensity;
+        Mouse.takeoverDuration = props.takeoverDuration;
+        Mouse.onInteract = () => {
+          this.lastUserInteraction = performance.now();
+          if (this.autoDriver) this.autoDriver.forceStop();
+        };
+        this.autoDriver = new AutoDriver(Mouse, this, {
+          enabled: props.autoDemo,
+          speed: props.autoSpeed,
+          resumeDelay: props.autoResumeDelay,
+          rampDuration: props.autoRampDuration
+        });
+        this.init();
+        this._loop = this.loop.bind(this);
+        this._resize = this.resize.bind(this);
+        window.addEventListener('resize', this._resize);
+        this._onVisibility = () => {
+          const hidden = document.hidden;
+          if (hidden) {
+            this.pause();
+          } else if (isVisibleRef.current) {
+            this.start();
+          }
+        };
+        document.addEventListener('visibilitychange', this._onVisibility);
+      }
+      init() {
+        if (Common.renderer && this.props.$wrapper) {
+          this.props.$wrapper.prepend(Common.renderer.domElement);
+        }
+        this.output = new Output();
+      }
+      resize() {
+        Common.resize();
+        this.output?.resize();
+      }
+      render() {
+        if (this.autoDriver) this.autoDriver.update();
+        Mouse.update();
+        Common.update();
+        this.output?.update();
+      }
+      loop() {
+        if (!this.running) return;
+        this.render();
+        rafRef.current = requestAnimationFrame(this._loop);
+      }
+      start() {
+        if (this.running) return;
+        this.running = true;
+        this._loop();
+      }
+      pause() {
+        this.running = false;
+        if (rafRef.current) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
+      }
+      dispose() {
         try {
-          if (!gl.canvas) return;
-          const rect = gl.canvas.getBoundingClientRect();
-          const clientX = 'touches' in e ? e.touches[0]?.clientX ?? mouseX : (e as MouseEvent).clientX;
-          const clientY = 'touches' in e ? e.touches[0]?.clientY ?? mouseY : (e as MouseEvent).clientY;
-
-          if (rect.width > 0 && rect.height > 0) {
-            mouseX = clientX - rect.left;
-            mouseY = rect.height - (clientY - rect.top);
+          window.removeEventListener('resize', this._resize);
+          document.removeEventListener('visibilitychange', this._onVisibility);
+          Mouse.dispose();
+          if (Common.renderer) {
+            const canvas = Common.renderer.domElement;
+            if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
+            Common.renderer.dispose();
+            Common.renderer.forceContextLoss();
           }
         } catch {
-          // Guard para ambientes sem DOM ativo
+          // ignore cleanup errors
         }
-      };
-
-      window.addEventListener('mousemove', handlePointerMove as unknown as EventListener);
-      window.addEventListener('touchmove', handlePointerMove as unknown as EventListener, { passive: true });
-
-      let isDisposed = false;
-      const startTime = performance.now();
-
-      const update = (time: number) => {
-        if (isDisposed) return;
-        animationFrameId = requestAnimationFrame(update);
-
-        const elapsed = (time - startTime) * 0.001;
-        program.uniforms.uTime.value = elapsed;
-
-        program.uniforms.uMouse.value[0] += (mouseX - program.uniforms.uMouse.value[0]) * 0.12;
-        program.uniforms.uMouse.value[1] += (mouseY - program.uniforms.uMouse.value[1]) * 0.12;
-
-        if (renderer && gl && mesh) {
-          try {
-            renderer.render({ scene: mesh });
-          } catch {
-            // Guard para descarte durante HMR
-          }
-        }
-      };
-
-      animationFrameId = requestAnimationFrame(update);
-
-      return () => {
-        isDisposed = true;
-        cancelAnimationFrame(animationFrameId);
-        window.removeEventListener('resize', handleResize);
-        window.removeEventListener('mousemove', handlePointerMove as unknown as EventListener);
-        window.removeEventListener('touchmove', handlePointerMove as unknown as EventListener);
-        if (gl.canvas && gl.canvas.parentElement) {
-          gl.canvas.parentElement.removeChild(gl.canvas);
-        }
-      };
-    } catch {
-      return () => {
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      };
+      }
     }
-  }, [autoIntensity, autoSpeed, colors, resolution, isViscous, viscous, mouseForce, cursorSize, autoDemo, isBounce]);
 
-  return (
-    <div
-      ref={containerRef}
-      className={`liquid-ether-container ${className}`}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-        pointerEvents: 'none',
-        zIndex: 0,
-        ...style,
-      }}
-    />
-  );
+    const container = mountRef.current;
+    container.style.position = container.style.position || 'relative';
+    container.style.overflow = container.style.overflow || 'hidden';
+
+    const webgl = new WebGLManager({
+      $wrapper: container,
+      autoDemo,
+      autoSpeed,
+      autoIntensity,
+      takeoverDuration,
+      autoResumeDelay,
+      autoRampDuration
+    });
+    webglRef.current = webgl;
+
+    const applyOptionsFromProps = () => {
+      if (!webglRef.current) return;
+      const sim = webglRef.current.output?.simulation;
+      if (!sim) return;
+      const prevRes = sim.options.resolution;
+      Object.assign(sim.options, {
+        mouse_force: mouseForce,
+        cursor_size: cursorSize,
+        isViscous,
+        viscous,
+        iterations_viscous: iterationsViscous,
+        iterations_poisson: iterationsPoisson,
+        dt,
+        BFECC,
+        resolution,
+        isBounce
+      });
+      if (resolution !== prevRes) {
+        sim.resize();
+      }
+    };
+    applyOptionsFromProps();
+
+    webgl.start();
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        const isVisible = entry.isIntersecting && entry.intersectionRatio > 0;
+        isVisibleRef.current = isVisible;
+        if (!webglRef.current) return;
+        if (isVisible && !document.hidden) {
+          webglRef.current.start();
+        } else {
+          webglRef.current.pause();
+        }
+      },
+      { threshold: [0, 0.01, 0.1] }
+    );
+    io.observe(container);
+    intersectionObserverRef.current = io;
+
+    const ro = new ResizeObserver(() => {
+      if (!webglRef.current) return;
+      if (resizeRafRef.current) cancelAnimationFrame(resizeRafRef.current);
+      resizeRafRef.current = requestAnimationFrame(() => {
+        if (!webglRef.current) return;
+        webglRef.current.resize();
+      });
+    });
+    ro.observe(container);
+    resizeObserverRef.current = ro;
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (resizeObserverRef.current) {
+        try {
+          resizeObserverRef.current.disconnect();
+        } catch {
+          // ignore
+        }
+      }
+      if (intersectionObserverRef.current) {
+        try {
+          intersectionObserverRef.current.disconnect();
+        } catch {
+          // ignore
+        }
+      }
+      if (webglRef.current) {
+        webglRef.current.dispose();
+      }
+      webglRef.current = null;
+    };
+  }, [
+    BFECC,
+    cursorSize,
+    dt,
+    isBounce,
+    isViscous,
+    iterationsPoisson,
+    iterationsViscous,
+    mouseForce,
+    resolution,
+    viscous,
+    colors,
+    autoDemo,
+    autoSpeed,
+    autoIntensity,
+    takeoverDuration,
+    autoResumeDelay,
+    autoRampDuration
+  ]);
+
+  return <div ref={mountRef} className={`liquid-ether-container ${className || ''}`} style={style} />;
 }
