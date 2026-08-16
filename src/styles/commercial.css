@@ -556,12 +556,54 @@
 }
 
 .transformation-story__panel {
-  display: grid;
-  grid-template-columns: minmax(13rem, 0.72fr) minmax(0, 2.28fr);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: clamp(1.5rem, 3vw, 3.5rem);
-  min-height: 100svh;
-  padding: clamp(5rem, 8vw, 8rem) clamp(1.25rem, 5vw, 5rem);
+  justify-content: center;
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding: clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 3.5rem);
+}
+
+.transformation-story__art-card {
+  position: relative;
+  width: 100%;
+  border-radius: clamp(1.5rem, 3vw, 2.5rem);
+  overflow: hidden;
+  box-shadow:
+    0 20px 60px rgb(204 82 112 / 0.22),
+    0 4px 20px rgb(0 0 0 / 0.06);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  background: #fce8eb;
+}
+
+.transformation-story__art-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.transformation-story__art-cta {
+  position: absolute;
+  bottom: clamp(1rem, 4vw, 3rem);
+  left: clamp(1.5rem, 5vw, 4.5rem);
+  z-index: 10;
+}
+
+.transformation-story__art-cta .commercial-button {
+  box-shadow: 0 10px 30px rgb(204 82 112 / 0.4);
+}
+
+@media (max-width: 48rem) {
+  .transformation-story__art-cta {
+    position: static;
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 .transformation-story__copy {
