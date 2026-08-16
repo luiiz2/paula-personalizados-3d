@@ -16,19 +16,23 @@ export function useSectionReveal<T extends HTMLElement>(
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!shouldEnhanceMotion({ finePointer, reducedMotion })) return;
 
-    const animation = gsap.from(selector, {
-      y: 42,
-      opacity: 0,
-      scale: 0.96,
-      duration: 0.7,
-      stagger: 0.09,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: ref.current,
-        start: 'top 78%',
-        toggleActions: 'play none none reverse',
+    const animation = gsap.fromTo(
+      selector,
+      { y: 28, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.08,
+        ease: 'power2.out',
+        clearProps: 'transform,opacity',
+        scrollTrigger: {
+          trigger: ref.current,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
       },
-    });
+    );
 
     return () => animation.kill();
   }, { scope: ref, dependencies: [selector] });

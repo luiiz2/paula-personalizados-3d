@@ -1339,6 +1339,16 @@
   font: 500 clamp(0.95rem, 1.4vw, 1.12rem) / 1.5 var(--font-sans);
 }
 
+.commercial-cta-card__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-inline: auto;
+  max-width: 100%;
+}
+
 /* Botoes de Acao Pilula */
 .cta-pill-button {
   display: inline-flex;
@@ -1346,7 +1356,7 @@
   justify-content: center;
   gap: 0.65rem;
   min-height: 3.25rem;
-  padding-inline: 1.5rem;
+  padding-inline: 1.4rem;
   border-radius: 999px;
   font-family: var(--font-sans);
   font-size: 0.95rem;
@@ -1355,6 +1365,8 @@
   background: rgb(255 255 255 / 0.05);
   border: 1px solid rgb(255 255 255 / 0.2);
   color: #ffffff;
+  flex-shrink: 0;
+  vertical-align: middle;
   transition:
     transform 250ms var(--ease-soft),
     box-shadow 250ms var(--ease-soft),
