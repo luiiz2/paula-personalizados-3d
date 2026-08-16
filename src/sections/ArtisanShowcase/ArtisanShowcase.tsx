@@ -1,17 +1,12 @@
-import { lazy, Suspense, useRef } from 'react';
+import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CommercialImage } from '@/components/ui/CommercialImage';
+import { LiquidEther } from '@/components/ui/LiquidEther';
 import { artisanShowcaseAssets, trustMessages } from '@/data/commercial';
 import { shouldPinEditorialPanel } from '@/lib/motion';
 import { prefersReducedMotion } from '@/lib/utils';
-
-const LiquidEtherLazy = lazy(() =>
-  import('@/components/ui/LiquidEther').then((module) => ({
-    default: module.LiquidEther,
-  })),
-);
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -89,27 +84,18 @@ export function ArtisanShowcase() {
       aria-labelledby="artisan-title"
     >
       <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
-        <Suspense
-          fallback={
-            <div
-              className="absolute inset-0"
-              style={{ background: 'linear-gradient(135deg, #b100f6, #ff00b2, #f900e7)' }}
-            />
-          }
-        >
-          <LiquidEtherLazy
-            mouseForce={20}
-            cursorSize={100}
-            isViscous={false}
-            viscous={30}
-            colors={['#b100f6', '#ff00b2', '#f900e7']}
-            autoDemo
-            autoSpeed={0.1}
-            autoIntensity={2.5}
-            isBounce={false}
-            resolution={0.75}
-          />
-        </Suspense>
+        <LiquidEther
+          mouseForce={20}
+          cursorSize={100}
+          isViscous={false}
+          viscous={30}
+          colors={['#b100f6', '#ff00b2', '#f900e7']}
+          autoDemo
+          autoSpeed={0.1}
+          autoIntensity={2.5}
+          isBounce={false}
+          resolution={0.5}
+        />
       </div>
 
       <div className="artisan-showcase__stage relative z-10" data-artisan-stage>

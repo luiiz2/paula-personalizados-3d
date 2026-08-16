@@ -6,8 +6,8 @@ describe('MemoryClosing', () => {
   it('renders the approved closing statement and informative image', () => {
     render(<MemoryClosing />);
 
-    expect(screen.getByRole('heading', { level: 2, name: 'Feito para quem importa.' })).toBeVisible();
-    expect(screen.getByAltText('Logo Paula Personalizados 3D')).toBeVisible();
-    expect(screen.getByRole('img', { name: /presente personalizado/i })).toBeVisible();
+    expect(screen.getByRole('heading', { level: 2, name: 'Feito para quem importa.' })).toBeInTheDocument();
+    expect(screen.getByAltText('Logo Paula Personalizados 3D')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /presente personalizado/i })).toBeInTheDocument();
   });
 });

@@ -140,24 +140,30 @@ export function LiquidEther({
 
           vec2 mouseNorm = uMouse / uResolution;
           float dist = distance(vUv, mouseNorm);
-          float mouseEffect = smoothstep(0.5, 0.0, dist) * (uMouseForce * 0.06);
+          float mouseEffect = smoothstep(0.5, 0.0, dist) * (uMouseForce * 0.08);
 
           vec2 q = vec2(0.0);
-          q.x = snoise(st + vec2(0.0, t * 0.4) + (vUv - mouseNorm) * mouseEffect * 2.2);
-          q.y = snoise(st + vec2(1.0, t * 0.3) + (vUv - mouseNorm) * mouseEffect * 2.2);
+          q.x = snoise(st * 2.2 + vec2(0.0, t * 0.35) + (vUv - mouseNorm) * mouseEffect * 2.5);
+          q.y = snoise(st * 2.2 + vec2(1.0, t * 0.28) + (vUv - mouseNorm) * mouseEffect * 2.5);
 
           vec2 r = vec2(0.0);
-          r.x = snoise(st + 1.0 * q + vec2(1.7, 9.2) + 0.15 * t + mouseEffect * 0.5);
-          r.y = snoise(st + 1.0 * q + vec2(8.3, 2.8) + 0.126 * t + mouseEffect * 0.5);
+          r.x = snoise(st * 2.2 + 1.2 * q + vec2(1.7, 9.2) + 0.15 * t + mouseEffect * 0.6);
+          r.y = snoise(st * 2.2 + 1.2 * q + vec2(8.3, 2.8) + 0.126 * t + mouseEffect * 0.6);
 
-          float f = snoise(st + r * uAutoIntensity);
+          float f = snoise(st * 2.2 + r * uAutoIntensity);
 
-          vec3 color = mix(uColor1, uColor2, clamp(f * f * 4.0, 0.0, 1.0));
-          color = mix(color, uColor3, clamp(length(q), 0.0, 1.0));
-          color = mix(color, uColor1, clamp(length(r.x), 0.0, 1.0));
+          float pattern = sin(f * 8.5 + t * 0.4) * 0.5 + 0.5;
+          pattern = pow(pattern, 1.6);
 
-          float alpha = smoothstep(-0.15, 0.85, f + mouseEffect * 0.5);
-          gl_FragColor = vec4(color, alpha * 0.95);
+          vec3 bgDark = vec3(0.01, 0.0, 0.02);
+          vec3 color = mix(bgDark, uColor1, smoothstep(0.12, 0.55, pattern));
+          color = mix(color, uColor2, smoothstep(0.42, 0.85, pattern));
+          color = mix(color, uColor3, smoothstep(0.72, 1.0, pattern) * 0.95);
+
+          float streaks = sin(length(q) * 10.0 - t * 0.6) * 0.5 + 0.5;
+          color += uColor2 * pow(streaks, 3.5) * 0.4;
+
+          gl_FragColor = vec4(color, 1.0);
         }
       `;
 
@@ -182,8 +188,8 @@ export function LiquidEther({
 
       const handleResize = () => {
         if (!container || !renderer) return;
-        const width = container.clientWidth || 1080;
-        const height = container.clientHeight || 1080;
+        const width = container.clientWidth || window.innerWidth || 1080;
+        const height = container.clientHeight || window.innerHeight || 1080;
         renderer.setSize(width, height);
         program.uniforms.uResolution.value = [width, height];
       };
@@ -194,8 +200,6 @@ export function LiquidEther({
       let mouseX = gl.canvas.width * 0.5;
       let mouseY = gl.canvas.height * 0.5;
 
-      const targetElement = container.parentElement || container;
-
       const handlePointerMove = (e: MouseEvent | TouchEvent) => {
         try {
           if (!gl.canvas) return;
@@ -203,14 +207,7 @@ export function LiquidEther({
           const clientX = 'touches' in e ? e.touches[0]?.clientX ?? mouseX : (e as MouseEvent).clientX;
           const clientY = 'touches' in e ? e.touches[0]?.clientY ?? mouseY : (e as MouseEvent).clientY;
 
-          if (
-            rect.width > 0 &&
-            rect.height > 0 &&
-            clientX >= rect.left &&
-            clientX <= rect.right &&
-            clientY >= rect.top &&
-            clientY <= rect.bottom
-          ) {
+          if (rect.width > 0 && rect.height > 0) {
             mouseX = clientX - rect.left;
             mouseY = rect.height - (clientY - rect.top);
           }
@@ -219,8 +216,8 @@ export function LiquidEther({
         }
       };
 
-      targetElement.addEventListener('mousemove', handlePointerMove as unknown as EventListener);
-      targetElement.addEventListener('touchmove', handlePointerMove as unknown as EventListener, { passive: true });
+      window.addEventListener('mousemove', handlePointerMove as unknown as EventListener);
+      window.addEventListener('touchmove', handlePointerMove as unknown as EventListener, { passive: true });
 
       let isDisposed = false;
       const startTime = performance.now();
@@ -250,8 +247,8 @@ export function LiquidEther({
         isDisposed = true;
         cancelAnimationFrame(animationFrameId);
         window.removeEventListener('resize', handleResize);
-        targetElement.removeEventListener('mousemove', handlePointerMove as unknown as EventListener);
-        targetElement.removeEventListener('touchmove', handlePointerMove as unknown as EventListener);
+        window.removeEventListener('mousemove', handlePointerMove as unknown as EventListener);
+        window.removeEventListener('touchmove', handlePointerMove as unknown as EventListener);
         if (gl.canvas && gl.canvas.parentElement) {
           gl.canvas.parentElement.removeChild(gl.canvas);
         }

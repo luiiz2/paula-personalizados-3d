@@ -7,7 +7,6 @@ import {
   type MouseEvent,
   type PointerEvent,
 } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CommercialImage } from '@/components/ui/CommercialImage';
 import { commercialCategories } from '@/data/commercial';
 
@@ -232,30 +231,6 @@ export function CategoryCoverflow() {
         })}
       </div>
 
-      <div className="category-coverflow__controls">
-        <button
-          type="button"
-          onClick={() => goTo(activeIndex - 1)}
-          aria-label="Categoria anterior"
-        >
-          <ChevronLeft aria-hidden="true" />
-        </button>
-        <span aria-live="polite" aria-atomic="true">
-          <span className="sr-only">
-            Categoria {activeIndex + 1} de {length}: {commercialCategories[activeIndex].title}
-          </span>
-          <span aria-hidden="true">
-            {activeIndex + 1}
-          </span>
-        </span>
-        <button
-          type="button"
-          onClick={() => goTo(activeIndex + 1)}
-          aria-label="Próxima categoria"
-        >
-          <ChevronRight aria-hidden="true" />
-        </button>
-      </div>
     </section>
   );
 }

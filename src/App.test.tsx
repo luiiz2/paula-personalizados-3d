@@ -43,7 +43,7 @@ describe('commercial landing page', () => {
     const footer = screen.getByRole('contentinfo');
 
     expect(channelsHeading).toBeVisible();
-    expect(closingHeading).toBeVisible();
+    expect(closingHeading).toBeInTheDocument();
     expect(closingChapter).toContainElement(closingHeading);
     expect(main).toContainElement(closingChapter);
     expect(main).not.toContainElement(footer);

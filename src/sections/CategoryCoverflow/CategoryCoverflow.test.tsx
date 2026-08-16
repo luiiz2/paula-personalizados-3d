@@ -40,24 +40,21 @@ describe('CategoryCoverflow', () => {
     expect(circularOffset(0, 3, 4)).toBe(1);
   });
 
-  it('supports visible controls and keyboard navigation', () => {
+  it('supports keyboard navigation', () => {
     render(<CategoryCoverflow />);
 
-    expect(screen.getByText('1')).toBeVisible();
-    expect(screen.getByRole('button', { name: /categoria anterior/i })).toBeVisible();
-    const nextButton = screen.getByRole('button', { name: /próxima categoria/i });
-    expect(nextButton).toBeVisible();
-    fireEvent.click(nextButton);
-    expect(screen.getByText('2')).toBeVisible();
+    const firstCategory = screen.getByRole('button', { name: 'Miniaturas da sua foto' });
+    const drawingCategory = screen.getByRole('button', { name: 'Do desenho para a vida em 3D' });
+
+    expect(firstCategory).toHaveAttribute('aria-current', 'true');
+
     const carousel = screen.getByRole('region', { name: /categorias de personalizados/i });
-    fireEvent.keyDown(carousel, {
-      key: 'ArrowLeft',
-    });
-    expect(screen.getByText('1')).toBeVisible();
-    fireEvent.keyDown(carousel, {
-      key: 'ArrowRight',
-    });
-    expect(screen.getByText('2')).toBeVisible();
+    fireEvent.keyDown(carousel, { key: 'ArrowRight' });
+    expect(drawingCategory).toHaveAttribute('aria-current', 'true');
+    expect(firstCategory).not.toHaveAttribute('aria-current');
+
+    fireEvent.keyDown(carousel, { key: 'ArrowLeft' });
+    expect(firstCategory).toHaveAttribute('aria-current', 'true');
   });
 
   it('marks only the selected category as current', () => {
@@ -75,7 +72,6 @@ describe('CategoryCoverflow', () => {
 
     expect(firstCategory).not.toHaveAttribute('aria-current');
     expect(drawingCategory).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByText('2')).toBeVisible();
   });
 
   it('keeps only the active category card in the tab order', () => {
@@ -89,7 +85,7 @@ describe('CategoryCoverflow', () => {
     expect(firstCategory).toHaveAttribute('tabindex', '0');
     expect(drawingCategory).toHaveAttribute('tabindex', '-1');
 
-    fireEvent.click(screen.getByRole('button', { name: /próxima categoria/i }));
+    fireEvent.click(drawingCategory);
 
     expect(firstCategory).toHaveAttribute('tabindex', '-1');
     expect(drawingCategory).toHaveAttribute('tabindex', '0');
@@ -97,33 +93,38 @@ describe('CategoryCoverflow', () => {
 
   it('navigates only when a horizontal pointer drag reaches the threshold', () => {
     render(<CategoryCoverflow />);
-    const activeCategory = screen.getByRole('button', { name: 'Miniaturas da sua foto' });
+    const firstCategory = screen.getByRole('button', { name: 'Miniaturas da sua foto' });
+    const drawingCategory = screen.getByRole('button', { name: 'Do desenho para a vida em 3D' });
 
-    fireEvent.pointerDown(activeCategory, { clientX: 100, pointerId: 1 });
-    fireEvent.pointerUp(activeCategory, { clientX: 60, pointerId: 1 });
-    expect(screen.getByText('1')).toBeVisible();
+    // Small drag — should NOT navigate
+    fireEvent.pointerDown(firstCategory, { clientX: 100, pointerId: 1 });
+    fireEvent.pointerUp(firstCategory, { clientX: 60, pointerId: 1 });
+    expect(firstCategory).toHaveAttribute('aria-current', 'true');
 
-    fireEvent.pointerDown(activeCategory, { clientX: 100, pointerId: 2 });
-    fireEvent.pointerUp(activeCategory, { clientX: 57, pointerId: 2 });
-    expect(screen.getByText('2')).toBeVisible();
+    // Large drag — should navigate
+    fireEvent.pointerDown(firstCategory, { clientX: 100, pointerId: 2 });
+    fireEvent.pointerUp(firstCategory, { clientX: 57, pointerId: 2 });
+    expect(drawingCategory).toHaveAttribute('aria-current', 'true');
 
-    fireEvent.click(activeCategory, { detail: 1 });
-    expect(screen.getByText('2')).toBeVisible();
+    // Click after drag is suppressed
+    fireEvent.click(firstCategory, { detail: 1 });
+    expect(drawingCategory).toHaveAttribute('aria-current', 'true');
   });
 
   it('expires drag click suppression when no residual click is emitted', () => {
     vi.useFakeTimers();
     render(<CategoryCoverflow />);
-    const activeCategory = screen.getByRole('button', { name: 'Miniaturas da sua foto' });
+    const firstCategory = screen.getByRole('button', { name: 'Miniaturas da sua foto' });
+    const drawingCategory = screen.getByRole('button', { name: 'Do desenho para a vida em 3D' });
 
-    fireEvent.pointerDown(activeCategory, { clientX: 100, pointerId: 1 });
-    fireEvent.pointerUp(activeCategory, { clientX: 57, pointerId: 1 });
-    expect(screen.getByText('2')).toBeVisible();
+    fireEvent.pointerDown(firstCategory, { clientX: 100, pointerId: 1 });
+    fireEvent.pointerUp(firstCategory, { clientX: 57, pointerId: 1 });
+    expect(drawingCategory).toHaveAttribute('aria-current', 'true');
 
     vi.runOnlyPendingTimers();
-    fireEvent.click(activeCategory, { detail: 1 });
+    fireEvent.click(firstCategory, { detail: 1 });
 
-    expect(screen.getByText('1')).toBeVisible();
+    expect(firstCategory).toHaveAttribute('aria-current', 'true');
   });
 
   it('offers an explicit drawing-to-result comparison control', () => {
@@ -141,12 +142,13 @@ describe('CategoryCoverflow', () => {
     fireEvent.click(screen.getByRole('button', { name: /do desenho para a vida em 3d/i }));
     const carousel = screen.getByRole('region', { name: /categorias de personalizados/i });
     const toggle = screen.getByRole('button', { name: /mostrar peça 3d pronta/i });
+    const drawingCategory = screen.getByRole('button', { name: /do desenho para a vida em 3d/i });
 
     fireEvent.pointerDown(toggle, { clientX: 100, pointerId: 1 });
     fireEvent.pointerUp(carousel, { clientX: 40, pointerId: 1 });
     fireEvent.click(toggle);
 
-    expect(screen.getByText('2')).toBeVisible();
+    expect(drawingCategory).toHaveAttribute('aria-current', 'true');
     expect(toggle).toHaveAttribute('aria-pressed', 'true');
     expect(toggle).toHaveAccessibleName(/mostrar desenho original/i);
   });

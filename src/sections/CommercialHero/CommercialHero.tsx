@@ -106,7 +106,7 @@ export function CommercialHero() {
           Início
         </a>
         <span className="hero-nav-divider" aria-hidden="true">|</span>
-        <a href="#sobre" className="hero-nav-link">
+        <a href="#feito-a-mao" className="hero-nav-link">
           Sobre
         </a>
         <span className="hero-nav-divider" aria-hidden="true">|</span>
@@ -116,10 +116,6 @@ export function CommercialHero() {
         <span className="hero-nav-divider" aria-hidden="true">|</span>
         <a href="#como-funciona" className="hero-nav-link">
           Como Funciona
-        </a>
-        <span className="hero-nav-divider" aria-hidden="true">|</span>
-        <a href="#sobre" className="hero-nav-link">
-          Galeria
         </a>
         <span className="hero-nav-divider" aria-hidden="true">|</span>
         <a href="#canais" className="hero-nav-link">
