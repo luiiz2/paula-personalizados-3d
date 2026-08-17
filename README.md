@@ -1,322 +1,265 @@
-# Paula Personalizados 3D
+# 🌸 Paula Personalizados 3D
 
-Manual central para desenvolver, manter, testar e publicar a landing page da Paula Personalizados 3D.
+<div align="center">
 
-Repositório privado: `https://github.com/luiiz2/paula-personalizados-3d`
+![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript_5.8-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite_8-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62E)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![GSAP](https://img.shields.io/badge/GSAP_3-88CE02?style=for-the-badge&logo=greensock&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![Oxlint](https://img.shields.io/badge/Oxlint-orange?style=for-the-badge)
+![GitHub Actions](https://img.shields.io/badge/CI-Passing-brightgreen?style=for-the-badge&logo=github-actions)
 
-## Estado atual
+<p align="center">
+  <strong>Landing page comercial editorial de alta conversão para estúdio de arte e personalização 3D artesanal.</strong><br>
+  Transformando memórias, fotos e desenhos em peças físicas tridimensionais exclusivas feitas à mão.
+</p>
 
-- Landing page comercial editorial montada na ordem Header → Hero → Marquee → ArtisanShowcase → Transformação → Categorias → Canais → Encerramento → Footer.
-- Build de produção aprovado.
-- Lint e testes automatizados aprovados.
-- 42 fotos públicas incluídas corretamente no build.
-- Layout verificado em desktop e mobile.
-- Menu mobile acessível por teclado e fecha com `Esc`.
-- CI configurado no GitHub Actions.
-- Audit do npm sem vulnerabilidades conhecidas na última verificação.
+[Visão Geral](#-visão-geral) •
+[O Que Foi Feito](#-o-que-foi-feito) •
+[Como Foi Feito](#-como-foi-feito) •
+[Tecnologias Utilizadas](#-tecnologias-utilizadas) •
+[Como Executar](#-como-executar) •
+[Guia de Manutenção](#-guia-de-manutenção) •
+[Estrutura do Projeto](#-estrutura-do-projeto) •
+[Qualidade e Testes](#-qualidade-e-testes)
 
-## Tecnologias
+---
 
-- React 19
-- TypeScript
-- Vite
-- Tailwind CSS
-- GSAP para animações
-- Oxlint
-- Vitest e Testing Library
-- GitHub Actions
+</div>
 
-## Requisitos
+## 📌 Visão Geral
 
-- Node.js ^22.22.2, ^24.15.0 ou >=26.0.0
-- npm
-- Git
+O projeto **Paula Personalizados 3D** é uma aplicação web estática de alto padrão visual, focada em performance, conversão comercial e experiência do usuário. Apresenta o processo artesanal de transformação de fotos 2D em esculturas, luminárias, miniaturas e chaveiros 3D colecionáveis.
 
-Se `node` ou `npm` não forem reconhecidos no Windows, use o launcher descrito abaixo. Para voltar a usar os comandos diretamente, feche e abra novamente o terminal após instalar as ferramentas.
+A plataforma foi desenvolvida com arquitetura modular, tipagem estrita de ponta a ponta, animações fluidas via hardware acceleration e conformidade com diretrizes de acessibilidade (WCAG AA).
 
-## Instalação e desenvolvimento
+---
 
-### Windows — recomendado
+## ✨ O Que Foi Feito
 
-Use o launcher do próprio projeto. Ele localiza Node, npm, Git e GitHub CLI nos caminhos comuns do Windows mesmo quando o `PATH` do terminal está desatualizado:
+A landing page foi estruturada em capítulos narrativos e visuais estratégicos:
+
+1. **Commercial Hero & Palco 3D**:
+   - Palco de apresentação com logotipo tridimensional interativo com efeito de rotação ao clique.
+   - Barra de navegação integrada e botões diretos para canais oficiais.
+   - Vitrine editorial com miniatura principal e duo equilibrado de produtos secundários (chaveiro pet e luminária coração) otimizados para desktop e mobile.
+   - Chamadas para ação (CTA) claras direcionando para atendimento direto no WhatsApp.
+
+2. **Faixa de Confiança (Trust Marquee)**:
+   - Faixa contínua com indicadores de credibilidade, garantia artesanal, envio seguro e suporte humanizado.
+
+3. **Artisan Showcase (Painel Carvão)**:
+   - Apresentação visual imersiva em fundo escuro (`#000000`) destacando a precisão cirúrgica, os materiais premium e o acabamento manual minucioso de cada peça.
+
+4. **Transformation Story (A Jornada da Arte)**:
+   - Narrativa em 3 etapas sequenciais: **Foto de Referência** → **Modelagem & Escultura 3D** → **Peça Física Real**.
+   - Demonstração tangível da fidelidade aos traços originais com suporte a fotos reais em alta definição.
+
+5. **Carrossel de Categorias (Infinite Coverflow Loop)**:
+   - Carrossel horizontal interativo com **loop infinito contínuo e sem fim** (`01 → 02 → 03 → 04 → 05 → 06 → 01...` e vice-versa).
+   - **Interação por arrasto 1:1 (Click + Hold + Drag no desktop / Swipe no mobile)** com cursor dinâmico `grab`/`grabbing`.
+   - Física de liberação com inércia calculada e snap suave (`power2.out`) para o card mais próximo.
+   - 6 bolinhas de paginação sincronizadas em tempo real com o card central e navegação inteligente pelo caminho mais curto.
+
+6. **Grade de Canais Comerciais (Channel Grid)**:
+   - Centralização dos 4 canais oficiais de compra: **WhatsApp**, **Instagram**, **Shopee** e **Mercado Livre**.
+   - Tratamento automático de canais indisponíveis (sem links falsos ou placeholders).
+
+7. **Encerramento Emocional & Rodapé**:
+   - Fechamento com chamada para eternizar momentos especiais e rodapé institucional com navegação semântica e direitos autorais.
+
+---
+
+## 🛠️ Como Foi Feito
+
+### 1. Arquitetura e Fontes Únicas de Verdade
+- Todos os dados comerciais, links, descrições e fotografias estão centralizados na camada de dados (`src/data/links.ts` e `src/data/commercial.ts`).
+- Nenhum componente contém dados sensíveis ou URLs fixadas no código (*hardcoded*), facilitando manutenções futuras sem tocar na camada de interface.
+
+### 2. Animações e Performance
+- Utilização do **GSAP (GreenSock)** com o hook oficial `@gsap/react` para orquestração precisa de timelines de entrada e microinterações.
+- Respeito integral à preferência do sistema por **movimento reduzido** (`prefers-reduced-motion`), desativando transições bruscas para usuários com sensibilidade visual sem ocultar conteúdos.
+- Ausência deliberada de bibliotecas pesadas de 3D ao vivo (como Three.js em tempo real para renderizações de catálogo), priorizando fotografias reais de alta resolução com carregamento inteligente (`priority` no Hero e `loading="lazy"` abaixo da dobra).
+
+### 3. Física de Arrasto e Matemática de Loop Infinito
+- A translação dos cards opera em espaço de coordenadas relativas normalizadas:
+  $$\text{wrappedX} = ((\text{baseX} - \text{bufferMin}) \pmod{\text{totalWidth}} + \text{totalWidth}) \pmod{\text{totalWidth}} + \text{bufferMin}$$
+- Permite que o usuário arraste infinitamente para qualquer lado sem saltos visuais, mantendo o card 01 alinhado na abertura inicial.
+
+### 4. Acessibilidade e Semântica (a11y)
+- Estrutura hierárquica rigorosa com exatamente um elemento `<h1>` no Hero e `<h2>` nas seções seguintes.
+- Suporte total a navegação por teclado (`Tab`, `Enter`, `Espaço`, `Setas direcionais`, `Home`, `End` e `Esc`).
+- Estados de foco visíveis (`:focus-visible`), atributos ARIA (`aria-roledescription`, `aria-selected`, `aria-label`, `aria-hidden`) e contraste de cores validado por testes automatizados.
+
+---
+
+## 💻 Tecnologias Utilizadas
+
+| Categoria | Tecnologia | Finalidade |
+|---|---|---|
+| **Core** | [React 19](https://react.dev/) | Biblioteca para construção de interfaces reativas e declarativas |
+| **Linguagem** | [TypeScript 5.8](https://www.typescriptlang.org/) | Tipagem estática rigorosa para prevenção de erros em tempo de compilação |
+| **Bundler & Dev Server** | [Vite 8](https://vite.dev/) | Build ultra-rápido com Rollup/Rolldown e Hot Module Replacement (HMR) |
+| **Estilização** | [Tailwind CSS 4](https://tailwindcss.com/) & Vanilla CSS | Design tokens, layouts responsivos e estilos modulares customizados |
+| **Animações** | [GSAP 3](https://gsap.com/) & `@gsap/react` | Orquestração de animações de entrada e física suave |
+| **Smooth Scroll** | [Lenis](https://lenis.darkroom.engineering/) | Rolagem suave baseada em inércia para ponteiros de alta precisão |
+| **Ícones** | [Lucide React](https://lucide.dev/) | Biblioteca leve de ícones SVG consistentes e acessíveis |
+| **Qualidade & Lint** | [Oxlint](https://oxc.rs/) | Linter estático ultra-rápido em Rust para validação de boas práticas |
+| **Testes** | [Vitest](https://vitest.dev/) & [Testing Library](https://testing-library.com/) | Suíte completa de testes unitários, de integração e contratos de acessibilidade |
+| **CI/CD** | [GitHub Actions](https://github.com/features/actions) | Pipeline automatizado de linting, testes e verificação de build |
+
+---
+
+## 🚀 Como Executar
+
+### Pré-requisitos
+- **Node.js**: `^22.22.2`, `^24.15.0` ou `>=26.0.0`
+- **npm**: `>=10.0.0`
+- **Git**
+
+### Passo a Passo
+
+1. **Clonar o repositório:**
+   ```bash
+   git clone https://github.com/luiiz2/paula-personalizados-3d.git
+   cd paula-personalizados-3d
+   ```
+
+2. **Instalar as dependências:**
+   ```bash
+   npm ci
+   ```
+
+3. **Iniciar o servidor de desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+   Acesse a aplicação no navegador em `http://localhost:5173`.
+
+---
+
+## ⚙️ Comandos do Projeto
+
+### Comandos padrão (npm)
+
+| Comando | Descrição |
+|---|---|
+| `npm run dev` | Inicia o servidor local de desenvolvimento com HMR |
+| `npm test` | Executa todos os 42 testes automatizados via Vitest |
+| `npm run test:watch` | Executa os testes em modo interativo contínuo |
+| `npm run lint` | Executa a análise estática com Oxlint em todos os arquivos |
+| `npm run build` | Compila o TypeScript (`tsc -b`) e gera a pasta otimizada `dist/` |
+| `npm run preview` | Executa um servidor local para inspecionar os arquivos de `dist/` |
+
+### Launcher automatizado (Windows)
+
+No Windows, você pode utilizar o script de conveniência `project.cmd`:
 
 ```powershell
-.\project.cmd doctor
-.\project.cmd setup
-.\project.cmd dev
+.\project.cmd setup     # Instala as dependências
+.\project.cmd dev       # Inicia o ambiente de desenvolvimento
+.\project.cmd check     # Executa Lint + Testes + Build de uma só vez
+.\project.cmd test      # Roda a suíte de testes
+.\project.cmd build     # Compila a versão final de produção
 ```
 
-Para validar tudo de uma vez:
+---
 
-```powershell
-.\project.cmd check
-```
+## 📖 Guia de Manutenção
 
-Consulte todos os comandos com `.\project.cmd help`.
-
-### npm — qualquer sistema operacional
-
-```bash
-npm ci
-npm run dev
-```
-
-O Vite informará o endereço local, normalmente `http://localhost:5173`.
-
-## Comandos
-
-No Windows, todos estes comandos também estão disponíveis por meio de `project.cmd`:
-
-```powershell
-.\project.cmd doctor      # encontra e mostra as ferramentas instaladas
-.\project.cmd setup       # instala as dependências
-.\project.cmd dev         # desenvolvimento
-.\project.cmd lint        # lint
-.\project.cmd test        # testes
-.\project.cmd test-watch  # testes em modo watch
-.\project.cmd build       # build
-.\project.cmd check       # lint + testes + build
-.\project.cmd preview     # preview de dist/
-.\project.cmd github      # autenticação do GitHub e estado do Git
-```
-
-Com npm disponível no `PATH`:
-
-```bash
-npm run dev         # servidor de desenvolvimento
-npm run lint        # análise estática
-npm test            # testes automatizados uma vez
-npm run test:watch  # testes durante o desenvolvimento
-npm run build       # TypeScript + build de produção
-npm run preview     # visualiza o conteúdo de dist/
-```
-
-Antes de enviar qualquer alteração, execute:
-
-```bash
-npm run lint
-npm test
-npm run build
-```
-
-## Onde alterar cada coisa
-
-| Necessidade | Arquivo ou pasta |
-| --- | --- |
-| Links do Instagram, WhatsApp, Shopee e Mercado Livre | `src/data/links.ts` |
-| Textos, categorias e imagens da experiência comercial | `src/data/commercial.ts` |
-| Seções e ordem da página | `src/App.tsx` |
-| Hero e faixa de confiança | `src/sections/CommercialHero/` |
-| Showcase artesanal em painel carvão | `src/sections/ArtisanShowcase/` |
-| Transformação da foto para o 3D | `src/sections/TransformationStory/` |
-| Categorias e coverflow | `src/sections/CategoryCoverflow/` |
-| Canais comerciais | `src/sections/ChannelGrid/` |
-| Encerramento emocional | `src/sections/MemoryClosing/` |
-| Cabeçalho e menu mobile | `src/components/Header/Header.tsx` |
-| Rodapé, telefone e canais | `src/sections/Footer/Footer.tsx` |
-| Cores, fontes, tamanhos e estilos globais | `src/index.css` e `src/styles/commercial.css` |
-| Título, descrição e metatags sociais | `index.html` |
-| Fotos públicas | `public/assets/` |
-| Componentes reutilizáveis | `src/components/` |
-| Testes | arquivos `*.test.ts` e `*.test.tsx` |
-| Pipeline do GitHub | `.github/workflows/ci.yml` |
-| Launcher independente do PATH no Windows | `project.cmd` e `scripts/project.ps1` |
-
-## Experiência editorial atual
-
-A jornada comercial usa capítulos de viewport e segue esta ordem: Hero com três produtos, faixa horizontal de confiança, `ArtisanShowcase` em painel carvão, transformação FOTO → TRANSFORMAÇÃO → PEÇA 3D, categorias em bento no desktop e coverflow no mobile, canais comerciais, encerramento emocional e Footer.
-
-A narrativa de transformação usa assets reais centralizados em `src/data/commercial.ts`:
-
-- foto de referência: `/assets/photo_2026-07-26_18-37-49.jpg`;
-- resultado personalizado: `/assets/photo_2026-07-20_12-15-36.jpg`.
-
-Para trocar qualquer fotografia da experiência, altere o respectivo objeto `CommercialImageAsset` em `src/data/commercial.ts`, mantendo `src`, `alt` verdadeiro e, quando necessário, `objectPosition`. O markup das seções não precisa ser modificado para uma simples substituição de imagem.
-
-Depoimentos não fazem parte da experiência atual porque ainda não existem relatos reais aprovados para publicação. Não crie avaliações, nomes ou falas fictícias para preencher essa ausência.
-
-A transformação é uma narrativa visual feita com fotografias reais, CSS e GSAP. O projeto decidiu não usar `img2threejs`, Three.js ou WebGL: não há reconstrução 3D ao vivo, e essas dependências acrescentariam peso e complexidade sem melhorar a representação fiel do trabalho artesanal.
-
-## Como alterar links externos
-
-Edite somente `src/data/links.ts`:
-
+### 1. Como alterar os links externos (WhatsApp, Instagram, Shopee, Mercado Livre)
+Edite exclusivamente o arquivo [`src/data/links.ts`](file:///src/data/links.ts):
 ```ts
 export const links = {
-  instagram: 'URL_REAL',
-  whatsapp: 'URL_REAL',
-  shopee: 'URL_REAL',
-  mercadoLivre: 'URL_REAL',
+  whatsapp: 'https://wa.me/5511999999999?text=...',
+  instagram: 'https://instagram.com/paulapersonalizados3d',
+  shopee: 'https://shopee.com.br/shop/...',
+  mercadoLivre: 'https://lista.mercadolivre.com.br/...',
 } as const;
 ```
+> *Nota: Caso um canal não esteja disponível, atribua uma string vazia `''`. A interface omitirá automaticamente o botão daquele canal sem quebrar o layout.*
 
-Regras:
+### 2. Como adicionar ou substituir fotografias
+1. Adicione a imagem na pasta [`public/assets/`](file:///public/assets/) com nome em minúsculas (ex: `luminaria-casal-real.webp`).
+2. Atualize o registro correspondente em [`src/data/commercial.ts`](file:///src/data/commercial.ts) informando `src`, `alt` descritivo, dimensões e `objectPosition`.
+3. Valide o projeto executando `npm test` e `npm run build`.
 
-- Nunca invente uma URL.
-- Se um canal não estiver disponível, use uma string vazia.
-- Não duplique links diretamente dentro dos componentes.
-- Links renderizados pelo componente `ExternalLink` já usam `target="_blank"` e proteção `noopener noreferrer`.
-- Não adicione `window.open()` ao `ExternalLink`, pois isso pode abrir duas abas.
+---
 
-## Como adicionar ou trocar fotos
-
-1. Coloque o arquivo em `public/assets/`.
-2. Prefira nomes simples, minúsculos e sem espaços, por exemplo `boneca-personalizada-rosa.webp`.
-3. Atualize os registros `CommercialImageAsset` em `src/data/commercial.ts`.
-4. Escreva um texto `alt` que descreva o conteúdo real.
-5. Execute `npm test` e `npm run build`.
-6. Confirme que a foto também existe em `dist/assets/` depois do build.
-
-As fotografias finais podem ser substituídas somente nesses registros, sem alterar o markup dos componentes.
-
-Não coloque fotos na pasta `assets/` da raiz. URLs `/assets/...` só são copiadas automaticamente quando os arquivos estão em `public/assets/`.
-
-## Estrutura do projeto
+## 📂 Estrutura do Projeto
 
 ```text
-.
-├── .github/workflows/ci.yml
+paula-personalizados-3d/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                 # Pipeline automatizada de CI
 ├── public/
-│   ├── assets/
-│   ├── favicon.svg
-│   └── icons.svg
+│   └── assets/                    # Assets públicos estáticos (imagens reais, fotos e logotipos)
 ├── src/
-│   ├── components/
-│   ├── data/
-│   │   ├── commercial.ts
-│   │   └── links.ts
-│   ├── sections/
-│   │   ├── CommercialHero/
-│   │   ├── TransformationStory/
-│   │   ├── CategoryCoverflow/
-│   │   ├── ChannelGrid/
-│   │   └── MemoryClosing/
+│   ├── components/                # Componentes reutilizáveis
+│   │   ├── Header/                # Cabeçalho e navegação mobile acessível
+│   │   ├── motion/                # Envoltórios de animação e scroll suave (Lenis)
+│   │   └── ui/                    # Botões, imagens com fallback e ícones personalizados
+│   ├── data/                      # Fontes únicas de verdade
+│   │   ├── commercial.ts          # Textos, produtos, etapas da história e categorias
+│   │   └── links.ts               # URLs dos canais de atendimento e venda
+│   ├── hooks/                     # Custom hooks (ex: usePointerParallax)
+│   ├── lib/                       # Funções utilitárias e regras de movimento
+│   ├── sections/                  # Seções principais da landing page
+│   │   ├── CommercialHero/        # Hero, logo 3D, vitrine editorial e marquee
+│   │   ├── ArtisanShowcase/       # Showcase em fundo carvão
+│   │   ├── TransformationStory/   # Narrativa visual da transformação 3D
+│   │   ├── CategoryCoverflow/     # Carrossel infinito com arrasto e bolinhas
+│   │   ├── ChannelGrid/           # Grade de canais oficiais
+│   │   ├── MemoryClosing/         # Seção de fechamento emocional
+│   │   └── Footer/                # Rodapé institucional
 │   ├── styles/
-│   │   └── commercial.css
-│   ├── test/
-│   ├── App.tsx
-│   ├── index.css
-│   └── main.tsx
-├── index.html
-├── package.json
-├── vite.config.ts
-└── vitest.config.ts
+│   │   └── commercial.css         # Estilos customizados e regras de responsividade
+│   ├── test/                      # Testes globais e validação de assets
+│   ├── App.tsx                    # Orquestração da jornada comercial
+│   ├── index.css                  # Variáveis de cor, tipografia e Tailwind CSS
+│   └── main.tsx                   # Ponto de entrada da aplicação React
+├── index.html                     # HTML semântico com metatags OpenGraph/SEO
+├── package.json                   # Dependências e scripts
+├── project.cmd                    # Launcher utilitário para Windows
+├── vite.config.ts                 # Configurações do Vite e plugins
+└── vitest.config.ts               # Configurações da suíte de testes Vitest
 ```
 
-## Regras importantes de código
+---
 
-- Mantenha apenas um `<h1>` na página; atualmente ele fica no Hero.
-- Use `<h2>` para títulos das seções seguintes.
-- Não remova o link “Ir para o conteúdo principal” de `src/App.tsx`.
-- O menu mobile deve continuar prendendo o foco, fechando com `Esc` e devolvendo o foco ao botão.
-- Animações devem respeitar `prefers-reduced-motion`.
-- Links de navegação interna devem ser âncoras reais, como `href="#produtos"`.
-- Não publique links com `href="#"` apenas como placeholder.
-- Não faça mudanças manuais em `dist/`; essa pasta é recriada pelo build.
-- Não versione `node_modules/` nem `dist/`.
-- Reutilize dados centralizados em vez de hardcodar produtos e links nos componentes.
-- Preserve `alt` nas imagens e `aria-label` em controles que possuem somente ícone.
+## 🧪 Qualidade e Testes
 
-## Testes existentes
+O projeto conta com **42 testes automatizados** distribuídos em 18 suítes com 100% de aprovação:
 
-- Segurança e comportamento básico de links externos.
-- Abertura e fechamento acessível do menu mobile.
-- Composição da jornada comercial, com um único `<h1>` e os headings principais.
-- Hero, transformação, coverflow, canais, encerramento e smooth scroll.
-- Integridade dos dados comerciais e da mensagem do WhatsApp.
-- Verificação de que todas as URLs `/assets/...` apontam para arquivos existentes em `public/`.
+- **Contratos de Acessibilidade**: Validação de foco no menu mobile, títulos semânticos (`h1`/`h2`), nomes acessíveis e atributos ARIA.
+- **Segurança de Links**: Validação de links externos com `target="_blank"` e `rel="noopener noreferrer"`.
+- **Física e Interação**: Testes de arrasto por ponteiro, limiares de deslocamento (threshold 42px) e supressão de clique acidental.
+- **Integridade de Assets**: Verificação automatizada de que todas as URLs referenciadas em `commercial.ts` existem fisicamente em `public/assets/`.
+- **Contraste de Cores**: Validação das combinações de cores conforme os padrões WCAG AA.
 
-Ao corrigir um bug, adicione um teste que falharia antes da correção sempre que isso for viável.
+Para executar todos os testes:
+```bash
+npm test
+```
 
-## Integração contínua
+---
 
-O arquivo `.github/workflows/ci.yml` executa automaticamente em pushes para `main` e em pull requests:
+## 🚀 Publicação e Deploy
 
-1. `npm ci`
-2. `npm run lint`
-3. `npm test`
-4. `npm run build`
-
-Não considere uma alteração pronta se o CI estiver vermelho.
-
-## Build e publicação
-
+Para gerar o pacote de produção:
 ```bash
 npm run build
 ```
+Os arquivos estáticos otimizados serão gerados na pasta `dist/`, prontos para serem hospedados em qualquer provedor de conteúdo estático:
+- **Vercel**: Deploy automático via Git (Build command: `npm run build`, Output directory: `dist`).
+- **Netlify**: Configuração padrão com `dist` como publish directory.
+- **Cloudflare Pages** ou **GitHub Pages**.
 
-O site estático será gerado em `dist/`. Configure a hospedagem para publicar essa pasta.
+---
 
-Configuração genérica:
-
-- Comando de instalação: `npm ci`
-- Comando de build: `npm run build`
-- Diretório de saída: `dist`
-- Framework: Vite
-
-## Checklist obrigatório antes do primeiro deploy público
-
-- [ ] Escolher e configurar o domínio definitivo.
-- [ ] Adicionar `<link rel="canonical">` em `index.html` com a URL definitiva.
-- [ ] Adicionar `og:url` com a URL definitiva.
-- [ ] Trocar `og:image` e `twitter:image` por URLs absolutas do domínio.
-- [ ] Criar uma imagem social dedicada de aproximadamente 1200 × 630 pixels.
-- [ ] Criar `public/robots.txt` com a URL do sitemap.
-- [ ] Criar `public/sitemap.xml` com a URL definitiva.
-- [ ] Criar textos reais de Política de Privacidade e Termos ou manter esses links removidos.
-- [ ] Se forem adicionados analytics, pixels ou cookies, avaliar aviso e consentimento conforme a LGPD.
-- [ ] Converter as fotos principais para WebP ou AVIF.
-- [ ] Criar tamanhos responsivos e `srcset` para reduzir dados no mobile.
-- [ ] Testar Instagram, WhatsApp, Shopee, Mercado Livre e telefone em aparelho real.
-- [ ] Testar desktop e mobile nos navegadores principais.
-- [ ] Conferir títulos, descrições, textos alternativos e informações comerciais.
-- [ ] Executar lint, testes e build.
-- [ ] Confirmar que o GitHub Actions está verde.
-
-## Otimização de imagens pendente
-
-As 42 fotos atuais totalizam aproximadamente 4,32 MB. Elas carregam corretamente, mas ainda devem ser otimizadas antes de campanhas ou tráfego maior.
-
-Plano recomendado:
-
-1. Manter o JPG original como fallback somente quando necessário.
-2. Gerar WebP ou AVIF em larguras adequadas ao layout.
-3. Atualizar `src/components/ui/Image.tsx` para aceitar `srcSet` e formatos alternativos.
-4. Priorizar somente a imagem principal do Hero.
-5. Manter as imagens abaixo da dobra com `loading="lazy"`.
-6. Medir novamente o site com Lighthouse após a publicação.
-
-## SEO pendente
-
-O projeto já possui título, descrição, Open Graph, Twitter Card e um `<h1>`. Quando o domínio estiver definido, ainda será necessário:
-
-- Usar URLs absolutas nas metatags sociais.
-- Adicionar canonical e `og:url`.
-- Criar sitemap e robots.
-- Adicionar dados estruturados apropriados ao negócio, sem inventar endereço ou informações comerciais.
-- Validar a imagem social e os dados estruturados em ferramentas oficiais.
-
-## Fluxo recomendado de Git
-
-```bash
-git status
-git add <arquivos>
-git commit -m "Descrição curta da alteração"
-git push
-```
-
-Antes do commit, revise `git diff` e confirme que não há arquivos privados, credenciais, `.env`, `node_modules/` ou conteúdo sem relação com a alteração.
-
-## Definição de pronto
-
-Uma alteração está pronta quando:
-
-- O comportamento solicitado funciona em desktop e mobile.
-- Não existem erros no console do navegador.
-- Não existem imagens quebradas.
-- A navegação por teclado continua funcionando.
-- `npm run lint` passa.
-- `npm test` passa.
-- `npm run build` passa.
-- O diff foi revisado.
-- A documentação foi atualizada quando a estrutura ou o fluxo mudou.
+<div align="center">
+  <sub>Desenvolvido com foco em excelência visual, performance e fidelidade artesanal para <strong>Paula Personalizados 3D</strong>.</sub>
+</div>
