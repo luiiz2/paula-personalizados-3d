@@ -19,6 +19,7 @@ export default defineConfig({
         manualChunks: (id: string) => {
           if (id.includes('lenis')) return 'lenis';
           if (id.includes('gsap')) return 'gsap';
+          if (id.includes('three')) return 'three';
           return undefined;
         },
       },

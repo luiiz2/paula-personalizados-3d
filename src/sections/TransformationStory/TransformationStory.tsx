@@ -27,20 +27,51 @@ export function TransformationStory() {
         },
       });
 
-      // 1. Left copy entrance
+      // 1. Eyebrow entrance
       tl.fromTo(
-        '[data-transform-copy-item]',
-        { y: 28, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: 'power3.out',
-        },
+        '[data-transform-eyebrow]',
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
       );
 
-      // 2. Stage 1 entrance
+      // 2. Text Masking Reveal: Title & description lines slide up through mask
+      tl.fromTo(
+        '[data-text-mask-line]',
+        { yPercent: 110, rotateZ: 1.2, opacity: 0 },
+        {
+          yPercent: 0,
+          rotateZ: 0,
+          opacity: 1,
+          duration: 0.95,
+          stagger: 0.08,
+          ease: 'power3.out',
+        },
+        '-=0.3',
+      );
+
+      // 3. Heart divider mask animation
+      tl.fromTo(
+        '[data-heart-line]',
+        { scaleX: 0, transformOrigin: 'center center' },
+        { scaleX: 1, duration: 0.6, ease: 'power2.out' },
+        '-=0.7',
+      );
+      tl.fromTo(
+        '[data-heart-symbol]',
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.8)' },
+        '-=0.6',
+      );
+
+      // 4. CTA button entrance
+      tl.fromTo(
+        '[data-transform-cta]',
+        { y: 20, opacity: 0, scale: 0.96 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.4)' },
+        '-=0.4',
+      );
+
+      // 5. Stage 1 entrance
       tl.fromTo(
         '[data-transform-stage="1"]',
         { y: 32, opacity: 0, scale: 0.96 },
@@ -51,18 +82,18 @@ export function TransformationStory() {
           duration: 0.7,
           ease: 'power2.out',
         },
-        '-=0.4',
+        '-=0.5',
       );
 
-      // 3. Arrow 1 entrance
+      // 6. Arrow 1 entrance
       tl.fromTo(
         '[data-transform-arrow="1"]',
         { opacity: 0, scaleX: 0.8 },
         { opacity: 1, scaleX: 1, duration: 0.5, ease: 'power2.out' },
-        '-=0.2',
+        '-=0.3',
       );
 
-      // 4. Stage 2 (Holographic transformation) entrance
+      // 7. Stage 2 (Holographic transformation) entrance
       tl.fromTo(
         '[data-transform-stage="2"]',
         { y: 32, opacity: 0, scale: 0.96 },
@@ -76,15 +107,15 @@ export function TransformationStory() {
         '-=0.3',
       );
 
-      // 5. Arrow 2 entrance
+      // 8. Arrow 2 entrance
       tl.fromTo(
         '[data-transform-arrow="2"]',
         { opacity: 0, scaleX: 0.8 },
         { opacity: 1, scaleX: 1, duration: 0.5, ease: 'power2.out' },
-        '-=0.2',
+        '-=0.3',
       );
 
-      // 6. Stage 3 (Finished 3D Piece) entrance
+      // 9. Stage 3 (Finished 3D Piece) entrance
       tl.fromTo(
         '[data-transform-stage="3"]',
         { y: 32, opacity: 0, scale: 0.96 },
@@ -115,30 +146,61 @@ export function TransformationStory() {
 
           {/* LEFT SIDE — Copy / CTA */}
           <div ref={leftCopyRef} className="transformation-story__copy">
-            <p className="commercial-eyebrow" data-transform-copy-item>
+            <p className="commercial-eyebrow" data-transform-eyebrow>
               <span className="transformation-story__sparkle" aria-hidden="true">✦</span> 01 · DA IDEIA À PEÇA
             </p>
 
-            <h2 id="transformation-title" data-transform-copy-item>
-              DA SUA FOTO <em className="transformation-story__title-italic">para o 3D.</em>
+            <h2
+              id="transformation-title"
+              aria-label="DA SUA FOTO para o 3D."
+              data-transform-title
+            >
+              <span className="text-mask-wrapper">
+                <span className="text-mask-inner" data-text-mask-line>
+                  DA SUA FOTO
+                </span>
+              </span>{' '}
+              <span className="text-mask-wrapper">
+                <em className="transformation-story__title-italic text-mask-inner" data-text-mask-line>
+                  para o 3D.
+                </em>
+              </span>
             </h2>
 
-            <div className="transformation-story__heart-divider" data-transform-copy-item aria-hidden="true">
-              <span className="heart-line" />
-              <span className="heart-symbol">♡</span>
-              <span className="heart-line" />
+            <div className="transformation-story__heart-divider" data-transform-heart aria-hidden="true">
+              <span className="heart-line" data-heart-line />
+              <span className="heart-symbol" data-heart-symbol>♡</span>
+              <span className="heart-line" data-heart-line />
             </div>
 
-            <p className="transformation-story__description" data-transform-copy-item>
-              Você envia a referência. Nós transformamos os detalhes em uma lembrança criada <strong className="font-semibold text-[#a83d5f]">especialmente para você.</strong>
+            <p className="transformation-story__description" data-transform-desc>
+              <span className="text-mask-wrapper">
+                <span className="text-mask-inner" data-text-mask-line>
+                  Você envia a referência. Nós transformamos
+                </span>
+              </span>
+              <span className="text-mask-wrapper">
+                <span className="text-mask-inner" data-text-mask-line>
+                  os detalhes em uma lembrança criada
+                </span>
+              </span>
+              <span className="text-mask-wrapper">
+                <span className="text-mask-inner" data-text-mask-line>
+                  <strong className="font-semibold text-[#a83d5f]">especialmente para você.</strong>
+                </span>
+              </span>
             </p>
 
-            <p className="transformation-story__handwritten" data-transform-copy-item>
-              Sua história, eternizada.
+            <p className="transformation-story__handwritten" data-transform-handwritten>
+              <span className="text-mask-wrapper">
+                <span className="text-mask-inner" data-text-mask-line>
+                  Sua história, eternizada.
+                </span>
+              </span>
             </p>
 
             {hasLink('whatsapp') && (
-              <div className="transformation-story__cta" data-transform-copy-item>
+              <div className="transformation-story__cta" data-transform-cta>
                 <ExternalLink
                   href={links.whatsapp}
                   showIcon={false}

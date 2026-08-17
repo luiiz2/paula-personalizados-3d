@@ -89,12 +89,13 @@ export function ArtisanShowcase() {
           cursorSize={100}
           isViscous={false}
           viscous={30}
+          iterationsPoisson={14}
           colors={['#b100f6', '#ff00b2', '#f900e7']}
           autoDemo
           autoSpeed={0.1}
           autoIntensity={2.5}
           isBounce={false}
-          resolution={0.5}
+          resolution={0.4}
         />
       </div>
 

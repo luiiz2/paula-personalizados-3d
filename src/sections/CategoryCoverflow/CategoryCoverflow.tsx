@@ -112,8 +112,9 @@ function horizontalLoop(items: HTMLElement[], config?: {
 
   function toIndex(index: number, vars?: gsap.TweenVars) {
     const v = vars || {};
-    Math.abs(index - curIndex) > length / 2 &&
-      (index += index > curIndex ? -length : length);
+    if (Math.abs(index - curIndex) > length / 2) {
+      index += index > curIndex ? -length : length;
+    }
     const newIndex = gsap.utils.wrap(0, length, index);
     let time = times[newIndex];
     if (time > tl.time() !== index > curIndex) {
@@ -190,18 +191,22 @@ export function CategoryCoverflow() {
         });
         loopTimelineRef.current = loop;
 
+        let lastActiveItem = 0;
         const pinTrigger = ScrollTrigger.create({
           trigger: sectionRef.current,
           pin: true,
           start: 'top top',
-          end: '+=2500',
-          scrub: 1,
+          end: '+=1400',
+          scrub: 0.8,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             // Drive the seamless loop progress smoothly with vertical scroll
             loop.progress(self.progress);
-            const currentItem = Math.floor(self.progress * length * 3) % length;
-            setActiveIndex(currentItem);
+            const currentItem = Math.floor(self.progress * length * 2) % length;
+            if (currentItem !== lastActiveItem) {
+              lastActiveItem = currentItem;
+              setActiveIndex(currentItem);
+            }
           },
         });
 

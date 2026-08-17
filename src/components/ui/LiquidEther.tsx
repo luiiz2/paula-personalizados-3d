@@ -29,11 +29,11 @@ export function LiquidEther({
   cursorSize = 100,
   isViscous = false,
   viscous = 30,
-  iterationsViscous = 32,
-  iterationsPoisson = 32,
+  iterationsViscous = 16,
+  iterationsPoisson = 16,
   dt = 0.014,
   BFECC = true,
-  resolution = 0.5,
+  resolution = 0.4,
   isBounce = false,
   colors = ['#b100f6', '#ff00b2', '#f900e7'],
   style = {},
@@ -125,12 +125,18 @@ export function LiquidEther({
 
       init(container: HTMLElement) {
         this.container = container;
-        this.pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        this.pixelRatio = 1;
         this.resize();
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        this.renderer = new THREE.WebGLRenderer({
+          antialias: false,
+          alpha: true,
+          powerPreference: 'high-performance',
+          depth: false,
+          stencil: false,
+        });
         this.renderer.autoClear = false;
         this.renderer.setClearColor(new THREE.Color(0x000000), 0);
-        this.renderer.setPixelRatio(this.pixelRatio);
+        this.renderer.setPixelRatio(1);
         this.renderer.setSize(this.width, this.height);
         this.renderer.domElement.style.width = '100%';
         this.renderer.domElement.style.height = '100%';
