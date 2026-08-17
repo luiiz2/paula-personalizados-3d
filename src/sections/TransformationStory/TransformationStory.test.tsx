@@ -25,12 +25,12 @@ describe('TransformationStory', () => {
     const { container } = render(<TransformationStory />);
 
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Da sua foto para o 3D.' }),
+      screen.getByRole('heading', { level: 2, name: /da sua foto para o 3d/i }),
     ).toBeInTheDocument();
     expect(container.querySelectorAll('[data-transform-stage]')).toHaveLength(3);
-    expect(screen.getByText('Foto')).toBeInTheDocument();
-    expect(screen.getByText('Transformação')).toBeInTheDocument();
-    expect(screen.getByText('Peça 3D')).toBeInTheDocument();
+    expect(screen.getByText('SUA FOTO')).toBeInTheDocument();
+    expect(screen.getByText('TRANSFORMAÇÃO')).toBeInTheDocument();
+    expect(screen.getByText('SUA PEÇA 3D')).toBeInTheDocument();
     expect(container.querySelectorAll('img:not([alt=""])')).toHaveLength(2);
   });
 
@@ -42,9 +42,9 @@ describe('TransformationStory', () => {
     ).toBeVisible();
     expect(screen.getByRole('img', { name: /referência original/i })).toBeVisible();
     expect(screen.getByRole('img', { name: /resultado personalizado/i })).toBeVisible();
-    expect(screen.getByText('Foto')).toBeVisible();
-    expect(screen.getByText('Transformação')).toBeVisible();
-    expect(screen.getByText('Peça 3D')).toBeVisible();
+    expect(screen.getByText('SUA FOTO')).toBeVisible();
+    expect(screen.getByText('TRANSFORMAÇÃO')).toBeVisible();
+    expect(screen.getByText('SUA PEÇA 3D')).toBeVisible();
     expect(screen.getByRole('link', { name: /criar meu personalizado/i })).toHaveAttribute(
       'href',
       links.whatsapp,

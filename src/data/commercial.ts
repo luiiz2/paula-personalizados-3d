@@ -7,8 +7,9 @@ export interface CommercialImageAsset {
 }
 
 export interface CommercialCategory {
-  id: 'foto-3d' | 'desenho-3d' | 'bonecos' | 'lembrancas';
+  id: string;
   title: string;
+  description: string;
   image: CommercialImageAsset;
   revealImage?: CommercialImageAsset;
 }
@@ -48,39 +49,45 @@ export const artisanShowcaseAssets = {
 
 export const heroAssets: CommercialImageAsset[] = [
   {
-    src: '/assets/spiderman-3d.webp',
-    alt: 'Miniatura 3D estilo colecionável',
+    src: '/assets/hero-paula-figure-3d.png',
+    alt: 'Escultura 3D personalizada da Paula sentada com livro de gratidão',
     objectPosition: '50% 50%',
   },
   {
-    src: '/assets/woman-magenta-dress-3d.webp',
-    alt: 'Personagem feminina personalizada com vestido elegante 3D',
+    src: '/assets/hero-luna-keychain-3d.png',
+    alt: 'Chaveiro 3D personalizado da cachorrinha Luna com laço rosa',
     objectPosition: '50% 50%',
   },
   {
-    src: '/assets/father-son-3d.webp',
-    alt: 'Pai e filho representados em 3D',
+    src: '/assets/hero-heart-lamp-3d.png',
+    alt: 'Luminária personalizada em coração 3D de casal com cachorrinho',
     objectPosition: '50% 50%',
   },
 ];
 
 export const transformationStory = {
   source: {
-    src: '/assets/photo_2026-07-26_18-37-49.jpg',
-    alt: 'Referência original: fotografia de uma mulher em um evento',
-    objectPosition: '52% 50%',
-  },
-  result: {
-    src: '/assets/photo_2026-07-20_12-15-36.jpg',
-    alt: 'Resultado personalizado: miniatura 3D criada a partir da fotografia',
+    src: '/assets/transform-red-dress-photo.png',
+    alt: 'Referência original: fotografia de mulher em vestido vermelho',
     objectPosition: '50% 50%',
   },
-} satisfies Record<'source' | 'result', CommercialImageAsset>;
+  process: {
+    src: '/assets/transform-red-dress-clay-3d.png',
+    alt: 'Modelagem 3D digital em escala de cinza',
+    objectPosition: '50% 50%',
+  },
+  result: {
+    src: '/assets/transform-red-dress-figure-3d.png',
+    alt: 'Resultado personalizado: miniatura 3D com vestido vermelho e base dourada',
+    objectPosition: '50% 50%',
+  },
+} satisfies Record<'source' | 'process' | 'result', CommercialImageAsset>;
 
 export const commercialCategories: CommercialCategory[] = [
   {
     id: 'foto-3d',
     title: 'Miniaturas da sua foto',
+    description: 'Sua foto transformada em escultura 3D rica em detalhes e afeto.',
     image: {
       src: '/assets/woman-holding-figure-3d.webp',
       alt: 'Foto de referência ao lado de uma miniatura 3D personalizada',
@@ -90,20 +97,17 @@ export const commercialCategories: CommercialCategory[] = [
   {
     id: 'desenho-3d',
     title: 'Do desenho para a vida em 3D',
+    description: 'Damos volume e realidade a desenhos e ilustrações especiais.',
     image: {
       src: '/assets/chaves-3d.webp',
       alt: 'Peça personalizada inspirada em personagem 3D',
-      objectPosition: '50% 50%',
-    },
-    revealImage: {
-      src: '/assets/spiderman-3d.webp',
-      alt: 'Peça personalizada estilo colecionável',
       objectPosition: '50% 50%',
     },
   },
   {
     id: 'bonecos',
     title: 'Bonecos personalizados',
+    description: 'Figuras colecionáveis feitas sob medida com o seu estilo único.',
     image: {
       src: '/assets/spiderman-3d.webp',
       alt: 'Boneco personalizado em estilo colecionável 3D',
@@ -113,9 +117,30 @@ export const commercialCategories: CommercialCategory[] = [
   {
     id: 'lembrancas',
     title: 'Lembranças especiais',
+    description: 'Momentos inesquecíveis e laços de amor eternizados em 3D.',
     image: {
       src: '/assets/father-son-3d.webp',
       alt: 'Lembrança personalizada de pai e filho em 3D',
+      objectPosition: '50% 50%',
+    },
+  },
+  {
+    id: 'luminarias-3d',
+    title: 'Luminárias & Placas 3D',
+    description: 'Luminárias em acrílico e madeira com arte 3D e iluminação acolhedora.',
+    image: {
+      src: '/assets/hero-heart-lamp-3d.png',
+      alt: 'Luminária personalizada em coração 3D de casal com cachorrinho',
+      objectPosition: '50% 50%',
+    },
+  },
+  {
+    id: 'chaveiros-pets',
+    title: 'Chaveiros & Pets 3D',
+    description: 'Seu pet do coração e memórias eternizados em chaveiros 3D.',
+    image: {
+      src: '/assets/hero-luna-keychain-3d.png',
+      alt: 'Chaveiro 3D personalizado de pet',
       objectPosition: '50% 50%',
     },
   },

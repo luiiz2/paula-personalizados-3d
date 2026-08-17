@@ -9,9 +9,9 @@ import {
 } from './commercial';
 
 describe('commercial landing data', () => {
-  it('defines four unique categories and four unique channels', () => {
-    expect(commercialCategories).toHaveLength(4);
-    expect(new Set(commercialCategories.map(({ id }) => id)).size).toBe(4);
+  it('defines six unique categories and four unique channels', () => {
+    expect(commercialCategories).toHaveLength(6);
+    expect(new Set(commercialCategories.map(({ id }) => id)).size).toBe(6);
     expect(commercialChannels.map(({ key }) => key)).toEqual([
       'whatsapp',
       'instagram',
@@ -24,14 +24,13 @@ describe('commercial landing data', () => {
     expect(heroAssets).toHaveLength(3);
     expect(transformationStory.source.src).toMatch(/^\/assets\//);
     expect(transformationStory.result.src).toMatch(/^\/assets\//);
-    expect(
-      commercialCategories.find(({ id }) => id === 'desenho-3d')?.revealImage,
-    ).toBeDefined();
+    expect(commercialCategories.every(({ image }) => Boolean(image.src))).toBe(true);
   });
 
   it('uses the approved real photo and matching 3D result', () => {
-    expect(transformationStory.source.src).toBe('/assets/photo_2026-07-26_18-37-49.jpg');
-    expect(transformationStory.result.src).toBe('/assets/photo_2026-07-20_12-15-36.jpg');
+    expect(transformationStory.source.src).toBe('/assets/transform-red-dress-photo.png');
+    expect(transformationStory.process.src).toBe('/assets/transform-red-dress-clay-3d.png');
+    expect(transformationStory.result.src).toBe('/assets/transform-red-dress-figure-3d.png');
     expect(transformationStory.source.src).not.toBe(transformationStory.result.src);
   });
 
@@ -41,12 +40,14 @@ describe('commercial landing data', () => {
     expect(artisanShowcaseAssets.secondary.alt).toMatch(/pai e filho/i);
   });
 
-  it('keeps exactly four unique commercial categories', () => {
+  it('keeps exactly six unique commercial categories', () => {
     expect(commercialCategories.map(({ id }) => id)).toEqual([
       'foto-3d',
       'desenho-3d',
       'bonecos',
       'lembrancas',
+      'luminarias-3d',
+      'chaveiros-pets',
     ]);
     expect(new Set(heroAssets.map(({ src }) => src)).size).toBe(heroAssets.length);
   });

@@ -8,15 +8,15 @@ afterEach(() => {
 });
 
 describe('CategoryCoverflow', () => {
-  it('assigns four editorial bento areas without losing the carousel contract', () => {
+  it('assigns six editorial bento areas without losing the carousel contract', () => {
     const { container } = render(<CategoryCoverflow />);
 
-    expect(container.querySelectorAll('[data-bento-size]')).toHaveLength(4);
+    expect(container.querySelectorAll('[data-bento-size]')).toHaveLength(6);
     expect(
       [...container.querySelectorAll('[data-bento-size]')].map((node) =>
         node.getAttribute('data-bento-size'),
       ),
-    ).toEqual(['feature', 'wide', 'standard', 'standard']);
+    ).toEqual(['feature', 'wide', 'standard', 'standard', 'wide', 'feature']);
     expect(screen.getByRole('region', { name: 'Categorias de personalizados' })).toHaveAttribute(
       'aria-roledescription',
       'carrossel',
@@ -28,16 +28,16 @@ describe('CategoryCoverflow', () => {
     const shells = [...container.querySelectorAll('.category-coverflow__slide-shell')];
     const revealTargets = [...container.querySelectorAll('[data-reveal-card]')];
 
-    expect(revealTargets).toHaveLength(4);
-    expect(shells).toHaveLength(4);
+    expect(revealTargets).toHaveLength(6);
+    expect(shells).toHaveLength(6);
     expect(revealTargets.every((target, index) => shells[index]?.contains(target))).toBe(true);
     expect(revealTargets.some((target) => target.classList.contains('category-coverflow__slide-shell')))
       .toBe(false);
   });
 
   it('wraps slide offsets around the shortest path', () => {
-    expect(circularOffset(3, 0, 4)).toBe(-1);
-    expect(circularOffset(0, 3, 4)).toBe(1);
+    expect(circularOffset(5, 0, 6)).toBe(-1);
+    expect(circularOffset(0, 5, 6)).toBe(1);
   });
 
   it('supports keyboard navigation', () => {
@@ -127,29 +127,11 @@ describe('CategoryCoverflow', () => {
     expect(firstCategory).toHaveAttribute('aria-current', 'true');
   });
 
-  it('offers an explicit drawing-to-result comparison control', () => {
+  it('renders all six category cards with consistent clean slide structure', () => {
     render(<CategoryCoverflow />);
-    fireEvent.click(screen.getByRole('button', { name: /do desenho para a vida em 3d/i }));
-
-    const toggle = screen.getByRole('button', { name: /mostrar peça 3d pronta/i });
-    expect(toggle.closest('.category-coverflow__slide')).toBeNull();
-    fireEvent.click(toggle);
-    expect(toggle).toHaveAttribute('aria-pressed', 'true');
-  });
-
-  it('keeps comparison pointer interaction isolated from carousel drag', () => {
-    render(<CategoryCoverflow />);
-    fireEvent.click(screen.getByRole('button', { name: /do desenho para a vida em 3d/i }));
-    const carousel = screen.getByRole('region', { name: /categorias de personalizados/i });
-    const toggle = screen.getByRole('button', { name: /mostrar peça 3d pronta/i });
-    const drawingCategory = screen.getByRole('button', { name: /do desenho para a vida em 3d/i });
-
-    fireEvent.pointerDown(toggle, { clientX: 100, pointerId: 1 });
-    fireEvent.pointerUp(carousel, { clientX: 40, pointerId: 1 });
-    fireEvent.click(toggle);
-
-    expect(drawingCategory).toHaveAttribute('aria-current', 'true');
-    expect(toggle).toHaveAttribute('aria-pressed', 'true');
-    expect(toggle).toHaveAccessibleName(/mostrar desenho original/i);
+    const buttons = screen.getAllByRole('button');
+    expect(buttons).toHaveLength(6);
+    expect(screen.getByRole('button', { name: 'Luminárias & Placas 3D' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Chaveiros & Pets 3D' })).toBeInTheDocument();
   });
 });
