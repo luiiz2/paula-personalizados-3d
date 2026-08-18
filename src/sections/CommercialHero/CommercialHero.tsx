@@ -7,8 +7,9 @@ import { heroAssets } from '@/data/commercial';
 import { hasLink, links } from '@/data/links';
 import { usePointerParallax } from '@/hooks/usePointerParallax';
 import { prefersReducedMotion } from '@/lib/utils';
-import { MessageCircle, ShoppingBag, Store, Mail } from 'lucide-react';
+import { MessageCircle, ShoppingBag, Store, Mail, Share2 } from 'lucide-react';
 import { InstagramIcon } from '@/components/ui/CustomIcons';
+import { ShareModal } from '@/components/ui/ShareModal';
 
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -18,6 +19,7 @@ export function CommercialHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const visualRef = usePointerParallax<HTMLDivElement>();
   const [isSpinning, setIsSpinning] = useState(true);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   // Dispara a animação 3D ao carregar a página e encerra após 1.3s
   useEffect(() => {
@@ -205,8 +207,20 @@ export function CommercialHero() {
               <Mail className="channel-pill__icon" />
               <span>Contato</span>
             </a>
+
+            <button
+              type="button"
+              onClick={() => setIsShareOpen(true)}
+              className="channel-pill cursor-pointer"
+              aria-label="Compartilhar o site"
+            >
+              <Share2 className="channel-pill__icon" />
+              <span>Compartilhar</span>
+            </button>
           </div>
         </div>
+
+        <ShareModal isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
       </div>
 
       {/* Visual Storytelling & Editorial Brand Showcase Stage */}

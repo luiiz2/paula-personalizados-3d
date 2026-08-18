@@ -2330,3 +2330,42 @@
 .channel-pill:focus-visible .channel-pill__icon {
   transform: scale(1.12);
 }
+
+/* Share Modal Animations & Accessibility */
+.share-modal-backdrop {
+  background: rgba(44, 32, 35, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: share-fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.share-modal-dialog {
+  animation: share-scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes share-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes share-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .share-modal-backdrop,
+  .share-modal-dialog {
+    animation: none !important;
+  }
+}

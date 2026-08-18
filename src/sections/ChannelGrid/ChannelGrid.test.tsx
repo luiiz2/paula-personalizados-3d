@@ -16,4 +16,10 @@ describe('ChannelGrid', () => {
       expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'));
     }
   });
+
+  it('renders the share button for sharing the website', () => {
+    render(<ChannelGrid />);
+    const shareBtn = screen.getByRole('button', { name: /compartilhar o site/i });
+    expect(shareBtn).toBeInTheDocument();
+  });
 });

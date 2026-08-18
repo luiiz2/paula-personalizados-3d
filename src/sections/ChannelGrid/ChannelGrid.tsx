@@ -1,7 +1,8 @@
-import type { ComponentType, SVGProps } from 'react';
-import { MessageCircle, ShoppingBag, Store } from 'lucide-react';
+import { useState, type ComponentType, type SVGProps } from 'react';
+import { MessageCircle, ShoppingBag, Store, Share2 } from 'lucide-react';
 import { ExternalLink } from '@/components/ui/ExternalLink';
 import { InstagramIcon } from '@/components/ui/CustomIcons';
+import { ShareModal } from '@/components/ui/ShareModal';
 import { commercialChannels, type CommercialChannel } from '@/data/commercial';
 import { hasLink } from '@/data/links';
 import { useSectionReveal } from '@/hooks/useSectionReveal';
@@ -16,10 +17,9 @@ const icons: Record<
   mercadoLivre: Store,
 };
 
-
-
 export function ChannelGrid() {
   const sectionRef = useSectionReveal<HTMLElement>('[data-reveal-channel]');
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   return (
     <section
@@ -66,7 +66,23 @@ export function ChannelGrid() {
                 </ExternalLink>
               );
             })}
+
+          <button
+            type="button"
+            onClick={() => setIsShareOpen(true)}
+            className="cta-pill-button cursor-pointer"
+            aria-label="Compartilhar o site"
+            data-reveal-channel
+          >
+            <Share2 className="cta-pill-button__icon" aria-hidden="true" />
+            <span className="cta-pill-button__label">Compartilhar</span>
+            <span className="cta-pill-button__arrow" aria-hidden="true">
+              ↗
+            </span>
+          </button>
         </div>
+
+        <ShareModal isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
       </div>
     </section>
   );

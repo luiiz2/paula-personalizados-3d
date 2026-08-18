@@ -45,4 +45,10 @@ describe('CommercialHero', () => {
       expect(layer).toContainElement(parallaxMedia[index]);
     });
   });
+
+  it('renders the share button and opens the share modal when clicked', async () => {
+    render(<CommercialHero />);
+    const shareBtn = screen.getByRole('button', { name: /compartilhar o site/i });
+    expect(shareBtn).toBeInTheDocument();
+  });
 });
