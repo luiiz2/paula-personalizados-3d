@@ -2369,3 +2369,57 @@
     animation: none !important;
   }
 }
+
+/* Botão Pequeno Redondo de Compartilhar no Canto Superior Direito */
+.hero-share-corner {
+  position: absolute;
+  top: clamp(0.75rem, 2vh, 1.5rem);
+  right: clamp(0.75rem, 2.5vw, 1.75rem);
+  z-index: 30;
+}
+
+.hero-share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgb(242 212 216 / 0.85);
+  box-shadow: 0 4px 16px rgb(204 82 112 / 0.12);
+  color: #cc5270;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease-soft), border-color 0.25s var(--ease-soft), box-shadow 0.25s var(--ease-soft), background 0.25s var(--ease-soft);
+}
+
+.hero-share-btn:hover,
+.hero-share-btn:focus-visible {
+  transform: scale(1.08) translateY(-2px);
+  border-color: #cc5270;
+  box-shadow: 0 8px 24px rgb(204 82 112 / 0.22);
+  background: #ffffff;
+}
+
+.hero-share-btn:active {
+  transform: scale(0.96);
+}
+
+.hero-share-btn:focus-visible {
+  outline: 2px solid #cc5270;
+  outline-offset: 2px;
+}
+
+.hero-share-btn__icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: #cc5270;
+  transition: transform 0.25s var(--ease-soft);
+}
+
+.hero-share-btn:hover .hero-share-btn__icon,
+.hero-share-btn:focus-visible .hero-share-btn__icon {
+  transform: scale(1.1);
+}

@@ -126,6 +126,19 @@ export function CommercialHero() {
     >
       {/* 100svh Hero Header Stage — Fills exactly the first viewport */}
       <div className="commercial-hero__viewport">
+        {/* Top-Right Round Share Button */}
+        <div className="hero-share-corner">
+          <button
+            type="button"
+            onClick={() => setIsShareOpen(true)}
+            className="hero-share-btn"
+            aria-label="Compartilhar o site"
+            title="Compartilhar site"
+          >
+            <Share2 className="hero-share-btn__icon" aria-hidden="true" />
+          </button>
+        </div>
+
         {/* 3D Glowing Logo Showcase (PNG oficial) — Fills available vertical space */}
         <div className="logo-3d-stage" data-hero-logo>
           <button
@@ -207,16 +220,6 @@ export function CommercialHero() {
               <Mail className="channel-pill__icon" />
               <span>Contato</span>
             </a>
-
-            <button
-              type="button"
-              onClick={() => setIsShareOpen(true)}
-              className="channel-pill cursor-pointer"
-              aria-label="Compartilhar o site"
-            >
-              <Share2 className="channel-pill__icon" />
-              <span>Compartilhar</span>
-            </button>
           </div>
         </div>
 
