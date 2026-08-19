@@ -7,7 +7,7 @@ import { heroAssets } from '@/data/commercial';
 import { hasLink, links } from '@/data/links';
 import { usePointerParallax } from '@/hooks/usePointerParallax';
 import { prefersReducedMotion } from '@/lib/utils';
-import { MessageCircle, ShoppingBag, Store, Mail, Share2 } from 'lucide-react';
+import { MessageCircle, ShoppingBag, Store, Mail, Share2, ChevronDown } from 'lucide-react';
 import { InstagramIcon } from '@/components/ui/CustomIcons';
 import { ShareModal } from '@/components/ui/ShareModal';
 
@@ -219,6 +219,18 @@ export function CommercialHero() {
             <a href="#canais" className="channel-pill">
               <Mail className="channel-pill__icon" />
               <span>Contato</span>
+            </a>
+          </div>
+
+          {/* Animated Scroll Indicator Arrow */}
+          <div className="hero-scroll-indicator" data-hero-support>
+            <a
+              href="#feito-a-mao"
+              className="hero-scroll-indicator__link"
+              aria-label="Rolar para baixo e ver mais"
+              title="Role para ver mais"
+            >
+              <ChevronDown className="hero-scroll-indicator__arrow" aria-hidden="true" />
             </a>
           </div>
         </div>

@@ -51,4 +51,10 @@ describe('CommercialHero', () => {
     const shareBtn = screen.getByRole('button', { name: /compartilhar o site/i });
     expect(shareBtn).toBeInTheDocument();
   });
+
+  it('renders the animated scroll down indicator link pointing to #feito-a-mao', () => {
+    render(<CommercialHero />);
+    const scrollIndicator = screen.getByRole('link', { name: /rolar para baixo/i });
+    expect(scrollIndicator).toHaveAttribute('href', '#feito-a-mao');
+  });
 });
