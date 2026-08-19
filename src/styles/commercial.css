@@ -316,8 +316,12 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+  width: 100%;
   max-width: 38rem;
   margin-inline: auto;
+  box-sizing: border-box;
+  padding-inline: 0.5rem;
+  overflow: visible;
 }
 
 .commercial-storytelling__eyebrow {
@@ -337,30 +341,36 @@
   align-items: center;
   text-align: center;
   font-family: var(--font-editorial);
-  line-height: 0.82;
+  line-height: 0.84;
   letter-spacing: -0.04em;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 .commercial-storytelling__line {
   display: block;
+  max-width: 100%;
 }
 
 .commercial-storytelling__line--1 {
-  font-size: clamp(5.2rem, 7.8vw, 9.2rem);
+  font-size: clamp(3.2rem, 7.8vw, 9.2rem);
   font-weight: 400;
   color: #171313;
 }
 
 .commercial-storytelling__line--2 {
-  font-size: clamp(4.6rem, 6.8vw, 8.2rem);
+  font-size: clamp(2.8rem, 6.8vw, 8.2rem);
   font-style: italic;
   color: var(--color-pink);
-  margin-top: -0.08em;
-  margin-bottom: -0.06em;
+  margin-top: -0.06em;
+  margin-bottom: -0.04em;
+  padding-inline: 0.15em;
 }
 
 .commercial-storytelling__line--3 {
-  font-size: clamp(4.9rem, 7.2vw, 8.8rem);
+  font-size: clamp(3rem, 7.2vw, 8.8rem);
   font-weight: 400;
   color: #171313;
 }
@@ -577,6 +587,53 @@
     width: clamp(10rem, 44vw, 13.5rem);
     height: clamp(10rem, 44vw, 13.5rem);
     transform: rotate(-3deg);
+  }
+
+  .commercial-storytelling__center {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 0.5rem;
+  }
+
+  .commercial-storytelling__title {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .commercial-storytelling__line--1 {
+    font-size: clamp(2.7rem, 11vw, 5.2rem);
+  }
+
+  .commercial-storytelling__line--2 {
+    font-size: clamp(2.4rem, 9.8vw, 4.6rem);
+    margin-top: -0.05em;
+    margin-bottom: -0.04em;
+    padding-inline: 0.15em;
+  }
+
+  .commercial-storytelling__line--3 {
+    font-size: clamp(2.6rem, 10.5vw, 5rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .commercial-storytelling__center {
+    padding-inline: 0.75rem;
+  }
+
+  .commercial-storytelling__line--1 {
+    font-size: clamp(2.15rem, 10.8vw, 2.9rem);
+  }
+
+  .commercial-storytelling__line--2 {
+    font-size: clamp(1.9rem, 9.6vw, 2.6rem);
+    margin-top: -0.04em;
+    margin-bottom: -0.03em;
+    padding-inline: 0.2em;
+  }
+
+  .commercial-storytelling__line--3 {
+    font-size: clamp(2.05rem, 10.2vw, 2.8rem);
   }
 }
 
