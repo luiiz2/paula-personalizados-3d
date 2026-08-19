@@ -222,16 +222,11 @@ export function CommercialHero() {
             </a>
           </div>
 
-          {/* Animated Scroll Indicator Arrow */}
-          <div className="hero-scroll-indicator" data-hero-support>
-            <a
-              href="#feito-a-mao"
-              className="hero-scroll-indicator__link"
-              aria-label="Rolar para baixo e ver mais"
-              title="Role para ver mais"
-            >
-              <ChevronDown className="hero-scroll-indicator__arrow" aria-hidden="true" />
-            </a>
+          {/* Animated Scroll Indicator Arrow (Decorative visual indicator without touch interaction) */}
+          <div className="hero-scroll-indicator" data-hero-support aria-hidden="true">
+            <div className="hero-scroll-indicator__icon-wrap">
+              <ChevronDown className="hero-scroll-indicator__arrow" />
+            </div>
           </div>
         </div>
 

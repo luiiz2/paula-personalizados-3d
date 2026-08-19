@@ -52,9 +52,9 @@ describe('CommercialHero', () => {
     expect(shareBtn).toBeInTheDocument();
   });
 
-  it('renders the animated scroll down indicator link pointing to #feito-a-mao', () => {
-    render(<CommercialHero />);
-    const scrollIndicator = screen.getByRole('link', { name: /rolar para baixo/i });
-    expect(scrollIndicator).toHaveAttribute('href', '#feito-a-mao');
+  it('renders the decorative animated scroll down indicator', () => {
+    const { container } = render(<CommercialHero />);
+    const scrollIndicator = container.querySelector('.hero-scroll-indicator');
+    expect(scrollIndicator).toBeInTheDocument();
   });
 });
